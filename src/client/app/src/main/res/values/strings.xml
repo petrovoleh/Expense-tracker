@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">expense tracker</string>
+
+
+    <string name="title_analytics">Analytics</string>
+    <string name="title_budgets">Budgets</string>
+    <string name="title_home">Home</string>
+    <string name="title_records">Records</string>
+    <string name="title_account">Account</string>
+</resources>
