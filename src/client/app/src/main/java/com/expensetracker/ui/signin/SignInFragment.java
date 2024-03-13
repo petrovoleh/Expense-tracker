@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
+import io.github.cdimascio.dotenv.Dotenv;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -36,6 +36,11 @@ public class SignInFragment extends Fragment {
     private EditText usernameEditText;
     private EditText passwordEditText;
     private FragmentSigninBinding binding;
+    Dotenv dotenv = Dotenv.configure()
+            .directory("/assets")
+            .filename("env") // instead of '.env', use 'env'
+            .load();
+    String baseUrl = dotenv.get("BASE_URL");
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -90,7 +95,7 @@ public class SignInFragment extends Fragment {
 
         // Create request object
         Request request = new Request.Builder()
-                .url("http://192.168.56.1:8080/api/auth/signin")
+                .url(baseUrl + "/api/auth/signin")
                 .post(body)
                 .build();
 
