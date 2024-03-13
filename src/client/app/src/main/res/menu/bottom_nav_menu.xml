@@ -4,12 +4,12 @@
 
 
     <item
-        android:id="@+id/navigation_dashboard"
+        android:id="@+id/navigation_analytics"
         android:icon="@drawable/analytics"
         android:title="@string/title_analytics" />
 
     <item
-        android:id="@+id/navigation_notifications"
+        android:id="@+id/navigation_budgets"
         android:icon="@drawable/budgets"
         android:title="@string/title_budgets" />
 
@@ -20,11 +20,11 @@
 
     <item
         android:id="@+id/navigation_records"
-        android:icon="@drawable/records2"
+        android:icon="@drawable/records"
         android:title="@string/title_records"/>
 
     <item
-        android:id="@+id/navigation_account"
+        android:id="@+id/navigation_profile"
         android:icon="@drawable/account"
         android:title="@string/title_account"/>
 

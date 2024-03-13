@@ -7,4 +7,6 @@
     <string name="title_home">Home</string>
     <string name="title_records">Records</string>
     <string name="title_account">Account</string>
+    <string name="title_signup">Sign Up</string>
+    <string name="title_signin">Sign In</string>
 </resources>

@@ -4,20 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
     app:startDestination="@+id/navigation_home">
+<!--    app:startDestination="@+id/navigation_signin">-->
+
 
 
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.expensetracker.ui.dashboard.DashboardFragment"
+        android:id="@+id/navigation_analytics"
+        android:name="com.expensetracker.ui.analytics.AnalyticsFragment"
         android:label="@string/title_analytics"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_analytics" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.expensetracker.ui.notifications.NotificationsFragment"
+        android:id="@+id/navigation_budgets"
+        android:name="com.expensetracker.ui.budgets.BudgetsFragment"
         android:label="@string/title_budgets"
-        tools:layout="@layout/fragment_notifications" />
+        tools:layout="@layout/fragment_budgets" />
 
     <fragment
         android:id="@+id/navigation_home"
@@ -27,13 +29,22 @@
 
     <fragment
         android:id="@+id/navigation_records"
-        android:name="com.expensetracker.ui.notifications.NotificationsFragment"
+        android:name="com.expensetracker.ui.records.RecordsFragment"
         android:label="@string/title_records"
-        tools:layout="@layout/fragment_notifications" />
-
+        tools:layout="@layout/fragment_records" />
     <fragment
-        android:id="@+id/navigation_account"
-        android:name="com.expensetracker.ui.notifications.NotificationsFragment"
+        android:id="@+id/navigation_signin"
+        android:name="com.expensetracker.ui.signin.SignInFragment"
+        android:label="@string/title_signin"
+        tools:layout="@layout/fragment_signin" />
+    <fragment
+        android:id="@+id/navigation_signup"
+        android:name="com.expensetracker.ui.signup.SignUpFragment"
+        android:label="@string/title_signup"
+        tools:layout="@layout/fragment_signup" />
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="com.expensetracker.ui.profile.ProfileFragment"
         android:label="@string/title_account"
-        tools:layout="@layout/fragment_notifications" />
+        tools:layout="@layout/fragment_profile" />
 </navigation>
