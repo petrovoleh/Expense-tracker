@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -38,13 +40,38 @@ public class ProfileFragment extends Fragment {
         binding = FragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        // Проверяем наличие данных в файле при открытии страницы
+        // Check if account data exists in the file
         if (!checkAccountData()) {
-            // Если данных нет, перенаправляем пользователя на страницу входа
+            // If data doesn't exist, navigate the user to the sign-in page
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
             navController.navigate(R.id.navigation_signin);
+        } else {
+            // If account data exists, load username and email
+            try {
+                JSONObject accountData = fileManager.readFromFile("accountdata.json");
+                if (accountData != null) {
+                    String username = accountData.getString("username");
+                    String email = accountData.getString("email");
+                    // Set username and email to TextViews
+                    binding.textName.setText(username);
+                    binding.textEmail.setText(email);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
+        Button exitButton = root.findViewById(R.id.exit);
+        exitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fileManager.writeToFile("accountdata.json", new JSONObject());
+                // Получаем NavController из главной активности
+                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
 
+                // Навигация к навигационному пункту signup
+                navController.navigate(R.id.navigation_signin);
+            }
+        });
         return root;
     }
 
@@ -54,17 +81,16 @@ public class ProfileFragment extends Fragment {
         binding = null;
     }
 
-    // Метод для проверки наличия данных в файле
+    // Method to check if account data exists in the file
     private boolean checkAccountData() {
         try {
             JSONObject accountData = fileManager.readFromFile("accountdata.json");
-            // Проверяем, содержит ли объект accountData необходимые данные
             return accountData != null && accountData.has("username") && !accountData.getString("username").isEmpty();
         } catch (JSONException e) {
             fileManager.writeToFile("accountdata.json", new JSONObject());
             e.printStackTrace();
         }
-        // В случае ошибки или отсутствия данных возвращаем false
         return false;
     }
 }
+

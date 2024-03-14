@@ -14,7 +14,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.expensetracker.MainActivity;
 import com.expensetracker.R;
+import com.expensetracker.data.FileManager;
 import com.expensetracker.databinding.FragmentSignupBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -37,12 +39,12 @@ public class SignUpFragment extends Fragment {
     private EditText usernameEditText;
     private EditText emailEditText;
     private EditText passwordEditText;
-
+    private FileManager fileManager;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         SignUpViewModel homeViewModel =
                 new ViewModelProvider(this).get(SignUpViewModel.class);
-
+        fileManager = new FileManager(getContext());
         binding = FragmentSignupBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
@@ -97,7 +99,7 @@ public class SignUpFragment extends Fragment {
 
         // Create request object
         Request request = new Request.Builder()
-                .url("http://192.168.56.1:8080/api/auth/signup")
+                .url(MainActivity.baseUrl +"/api/auth/signup")
                 .post(body)
                 .build();
 
@@ -109,6 +111,7 @@ public class SignUpFragment extends Fragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        System.out.println("Request failed");
                         Toast.makeText(getContext(), "Request failed", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -120,8 +123,27 @@ public class SignUpFragment extends Fragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        System.out.println(responseData);
                         // Handle response here
                         Toast.makeText(getContext(), responseData, Toast.LENGTH_SHORT).show();
+                        try {
+                            JSONObject jsonResponse = new JSONObject(responseData);
+                            JSONObject json = new JSONObject();
+                            json.put("id", jsonResponse.getString("id"));
+                            json.put("username", jsonResponse.getString("username"));
+                            json.put("email", jsonResponse.getString("email"));
+                            json.put("accessToken", jsonResponse.getString("accessToken"));
+                            json.put("tokenType", jsonResponse.getString("tokenType"));
+
+                            // Write JSON data to file
+                            fileManager.writeToFile("accountdata.json", json);
+                            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+
+                            // Навигация к навигационному пункту signup
+                            navController.navigate(R.id.navigation_profile);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
             }

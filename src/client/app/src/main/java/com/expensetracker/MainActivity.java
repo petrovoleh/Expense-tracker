@@ -12,14 +12,20 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.expensetracker.databinding.ActivityMainBinding;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
-
+    public static String baseUrl;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Dotenv dotenv = Dotenv.configure()
+                .directory("./assets")
+                .filename("env") // instead of '.env', use 'env'
+                .load();
+        baseUrl = dotenv.get("BASE_URL");
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
