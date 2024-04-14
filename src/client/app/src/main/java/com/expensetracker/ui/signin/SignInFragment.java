@@ -1,6 +1,5 @@
 package com.expensetracker.ui.signin;
 
-import static androidx.core.content.ContextCompat.getSystemService;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -160,6 +159,7 @@ public class SignInFragment extends Fragment {
             }
         });
     }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();

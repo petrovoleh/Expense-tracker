@@ -2,6 +2,7 @@ package com.expensetracker;
 
 import android.os.Bundle;
 
+import com.expensetracker.data.AppDatabase;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,6 +10,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.room.Room;
 
 import com.expensetracker.databinding.ActivityMainBinding;
 
@@ -18,9 +20,12 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     public static String baseUrl;
+    private static AppDatabase database;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        database = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "transaction-db").build();
         Dotenv dotenv = Dotenv.configure()
                 .directory("./assets")
                 .filename("env") // instead of '.env', use 'env'
@@ -39,5 +44,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
     }
-
+    public static AppDatabase getDatabase() {
+        return database;
+    }
 }

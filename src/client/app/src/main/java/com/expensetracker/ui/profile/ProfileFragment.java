@@ -15,6 +15,8 @@ import androidx.navigation.Navigation;
 import com.expensetracker.R;
 import com.expensetracker.data.FileManager;
 import com.expensetracker.databinding.FragmentProfileBinding;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
@@ -45,6 +47,8 @@ public class ProfileFragment extends Fragment {
             // If data doesn't exist, navigate the user to the sign-in page
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
             navController.navigate(R.id.navigation_signin);
+            BottomNavigationView bottomNavigationView = requireActivity().findViewById(R.id.nav_view);
+            bottomNavigationView.setSelectedItemId(R.id.navigation_profile);
         } else {
             // If account data exists, load username and email
             try {
@@ -74,7 +78,32 @@ public class ProfileFragment extends Fragment {
         });
         return root;
     }
+    @Override
+    public void onResume() {
+        BottomNavigationView bottomNavigationView = requireActivity().findViewById(R.id.nav_view);
+        bottomNavigationView.setSelectedItemId(R.id.navigation_profile);
+        super.onResume();
+        if (!checkAccountData()) {
+            // If data doesn't exist, navigate the user to the sign-in page
+            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+            navController.navigate(R.id.navigation_signin);
+        } else {
+            // If account data exists, load username and email
+            try {
+                JSONObject accountData = fileManager.readFromFile("accountdata.json");
+                if (accountData != null) {
+                    String username = accountData.getString("username");
+                    String email = accountData.getString("email");
+                    // Set username and email to TextViews
+                    binding.textName.setText(username);
+                    binding.textEmail.setText(email);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
 
+    }
     @Override
     public void onDestroyView() {
         super.onDestroyView();
