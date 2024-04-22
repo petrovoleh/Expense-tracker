@@ -13,16 +13,18 @@
         android:src="@drawable/budgets" />
 
     <!-- Username EditText -->
+
+    <!-- Email EditText -->
+
     <EditText
         android:id="@+id/usernameEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/logoImageView"
+        android:layout_below="@+id/errorText"
+        android:layout_marginTop="16dp"
         android:hint="Username"
-        android:inputType="text"
-        android:layout_marginTop="16dp" />
+        android:inputType="text" />
 
-    <!-- Email EditText -->
     <EditText
         android:id="@+id/emailEditText"
         android:layout_width="match_parent"
@@ -69,5 +71,15 @@
         android:text="By creating an account, you agree to our Terms &amp; Privacy."
         android:gravity="center"
         android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/errorText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/logoImageView"
+        android:layout_marginTop="15dp"
+        android:text=" "
+        android:textAlignment="center"
+        android:textSize="16sp" />
 
 </RelativeLayout>

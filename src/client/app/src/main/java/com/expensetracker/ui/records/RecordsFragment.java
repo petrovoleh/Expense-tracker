@@ -17,6 +17,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.expensetracker.R;
+import com.expensetracker.data.Categories;
 
 public class RecordsFragment extends Fragment {
 
@@ -32,7 +33,7 @@ public class RecordsFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_records, container, false);
 
         Spinner spinnerCategory = root.findViewById(R.id.spinnerCategory);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_dropdown_item, recordsViewModel.getCategories());
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_dropdown_item, Categories.getCategoriesNames());
         spinnerCategory.setAdapter(adapter);
 
         editTextValue = root.findViewById(R.id.editTextValue);

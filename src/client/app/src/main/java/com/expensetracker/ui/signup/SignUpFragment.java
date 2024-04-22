@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -18,6 +18,7 @@ import com.expensetracker.MainActivity;
 import com.expensetracker.R;
 import com.expensetracker.data.FileManager;
 import com.expensetracker.databinding.FragmentSignupBinding;
+import com.expensetracker.validators.Validator;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.json.JSONException;
@@ -38,6 +39,7 @@ public class SignUpFragment extends Fragment {
     private FragmentSignupBinding binding;
     private EditText usernameEditText;
     private EditText emailEditText;
+    private TextView errorText;
     private EditText passwordEditText;
     private FileManager fileManager;
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -51,6 +53,7 @@ public class SignUpFragment extends Fragment {
         BottomNavigationView bottomNavigationView = requireActivity().findViewById(R.id.nav_view);
         bottomNavigationView.setSelectedItemId(R.id.navigation_profile);
 
+        errorText = root.findViewById(R.id.errorText);
         usernameEditText = root.findViewById(R.id.usernameEditText);
         emailEditText = root.findViewById(R.id.emailEditText);
         passwordEditText = root.findViewById(R.id.passwordEditText);
@@ -81,6 +84,14 @@ public class SignUpFragment extends Fragment {
         String username = usernameEditText.getText().toString().trim();
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
+        if(
+        !Validator.validateName(getContext(), username,errorText) ||
+        !Validator.validateEmail(getContext(),email,errorText) ||
+        !Validator.validatePassword(getContext(),password,errorText)
+        ){
+            return;
+        }
+
 
         JSONObject requestBody = new JSONObject();
         try {
@@ -111,8 +122,8 @@ public class SignUpFragment extends Fragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        errorText.setText("The request failed, the server is unavailable, please try again after some time");
                         System.out.println("Request failed");
-                        Toast.makeText(getContext(), "Request failed", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -125,7 +136,7 @@ public class SignUpFragment extends Fragment {
                     public void run() {
                         System.out.println(responseData);
                         // Handle response here
-                        Toast.makeText(getContext(), responseData, Toast.LENGTH_SHORT).show();
+
                         try {
                             JSONObject jsonResponse = new JSONObject(responseData);
                             JSONObject json = new JSONObject();
@@ -143,6 +154,14 @@ public class SignUpFragment extends Fragment {
                             navController.navigate(R.id.navigation_profile);
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            JSONObject jsonResponse = null;
+                            try {
+                                jsonResponse = new JSONObject(responseData);
+                                errorText.setText(jsonResponse.getString("message"));
+                            } catch (JSONException ex) {
+                                throw new RuntimeException(ex);
+                            }
+
                         }
                     }
                 });

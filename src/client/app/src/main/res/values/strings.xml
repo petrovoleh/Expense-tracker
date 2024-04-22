@@ -9,4 +9,11 @@
     <string name="title_account">Account</string>
     <string name="title_signup">Sign Up</string>
     <string name="title_signin">Sign In</string>
+    <string name="error_empty">Please fill in all fields</string>
+    <string name="error_name_length">Name should not exceed 254 characters</string>
+    <string name="error_email_invalid">Email address is incorrect</string>
+    <string name="error_email_length">Email should not exceed 254 characters</string>
+    <string name="error_password_length">Password should be at least 6 characters long and not exceed 254 characters</string>
+    <string name="error_password_criteria">Password should contain at least one uppercase letter, one lowercase letter, one digit, and one special character</string>
+
 </resources>

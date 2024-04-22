@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.TextView;
 import io.github.cdimascio.dotenv.Dotenv;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -20,6 +20,7 @@ import com.expensetracker.R;
 import com.expensetracker.data.FileManager;
 import com.expensetracker.databinding.FragmentSigninBinding;
 import com.expensetracker.ui.signup.SignUpFragment;
+import com.expensetracker.validators.Validator;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -41,7 +42,7 @@ public class SignInFragment extends Fragment {
     private EditText passwordEditText;
     private FragmentSigninBinding binding;
     private FileManager fileManager;
-
+    private TextView errorText;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -51,8 +52,10 @@ public class SignInFragment extends Fragment {
         binding = FragmentSigninBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         usernameEditText = root.findViewById(R.id.usernameEditText);
+        errorText = root.findViewById(R.id.errorText);
         passwordEditText = root.findViewById(R.id.passwordEditText);
         // Находим кнопку "Sign Up"
+
         Button signUpButton = root.findViewById(R.id.signUpButton);
         Button signInButton = root.findViewById(R.id.signInButton);
         // Устанавливаем слушатель нажатий
@@ -79,7 +82,11 @@ public class SignInFragment extends Fragment {
     private void signIn() {
         String username = usernameEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
-
+        if(!Validator.validateName(getContext(), username,errorText)
+                || !Validator.validateName(getContext(),password,errorText)
+        ){
+            return;
+        }
         JSONObject requestBody = new JSONObject();
         try {
             requestBody.put("username", username);
@@ -97,7 +104,7 @@ public class SignInFragment extends Fragment {
 
         if (!isConnected) {
             System.out.println("no internet connection");
-            Toast.makeText(getContext(), "no internet connection", Toast.LENGTH_SHORT).show();
+            errorText.setText("The request failed,no internet connection");
         }
         else{
             System.out.println("internet connection");
@@ -122,7 +129,7 @@ public class SignInFragment extends Fragment {
                     @Override
                     public void run() {
                         System.out.println( "Request failed");
-                        Toast.makeText(getContext(), "Request failed", Toast.LENGTH_SHORT).show();
+                        errorText.setText("The request failed, the server is unavailable, please try again after some time");
                     }
                 });
             }
@@ -134,8 +141,8 @@ public class SignInFragment extends Fragment {
                     @Override
                     public void run() {
                         // Handle response here
-                        System.out.println(responseData+ Toast.LENGTH_SHORT);
-                        Toast.makeText(getContext(), responseData, Toast.LENGTH_SHORT).show();
+                        System.out.println(responseData);
+                        errorText.setText(responseData);
                         try {
                             JSONObject jsonResponse = new JSONObject(responseData);
                             JSONObject json = new JSONObject();

@@ -2,6 +2,7 @@ package com.expensetracker.models;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+import java.util.Date;
 
 @Entity(tableName = "transactions")
 public class Transaction {
@@ -10,23 +11,30 @@ public class Transaction {
     private String category;
     private double value;
     private String place;
+    private Date time;
+
     public Transaction() {
     }
+
     public Transaction(String category, double value, String place) {
         this.category = category;
         this.value = value;
         this.place = place;
+        this.time = new Date();
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getCategory() {
         return category;
     }
-    public long getId() {
-        return id;
-    }
-    public void setId(long id) {
-        this.id = id;
-    }
+
     public void setCategory(String category) {
         this.category = category;
     }
@@ -47,12 +55,22 @@ public class Transaction {
         this.place = place;
     }
 
+    public Date getTime() {
+        return time;
+    }
+
+    public void setTime(Date time) {
+        this.time = time;
+    }
+
     @Override
     public String toString() {
         return "Transaction{" +
-                "category='" + category + '\'' +
+                "id=" + id +
+                ", category='" + category + '\'' +
                 ", value=" + value +
                 ", place='" + place + '\'' +
+                ", time=" + time +
                 '}';
     }
 }

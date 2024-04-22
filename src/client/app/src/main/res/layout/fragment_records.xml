@@ -16,13 +16,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Value"
-        android:inputType="numberDecimal"/>
+        android:inputType="numberDecimal"
+        android:autofillHints="10.00" />
 
     <EditText
         android:id="@+id/editTextPlace"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Place"/>
+        android:hint="Note"
+        android:autofillHints="" />
 
     <Button
         android:id="@+id/buttonAddRecord"

@@ -8,7 +8,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.expensetracker.R;
 import com.expensetracker.models.Transaction;
+
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.TransactionViewHolder> {
 
@@ -28,7 +31,10 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     @Override
     public void onBindViewHolder(@NonNull TransactionViewHolder holder, int position) {
         Transaction transaction = transactions.get(position);
-        String text = transaction.getCategory()+"\n"+transaction.getPlace()+" "+transaction.getValue()+" EUR";
+        Locale currentLocale = Locale.getDefault();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm", currentLocale);
+        String formattedDate = dateFormat.format(transaction.getTime());
+        String text = formattedDate + " " + transaction.getCategory() + "\n" + transaction.getPlace() + " " + transaction.getValue() + " EUR";
         holder.textViewTransaction.setText(text);
     }
 

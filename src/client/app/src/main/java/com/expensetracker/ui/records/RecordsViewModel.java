@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.expensetracker.data.Categories;
 import com.expensetracker.models.Transaction;
 import com.expensetracker.dao.TransactionDao;
 import com.expensetracker.data.AppDatabase;
@@ -19,11 +20,7 @@ public class RecordsViewModel extends ViewModel {
 
     private final MutableLiveData<Transaction> mTransaction = new MutableLiveData<>();
     private final TransactionDao transactionDao;
-    private final String[] categories = {"Food", "Transportation", "Entertainment", "Shopping", "Bills", "Others"};
 
-    public String[] getCategories() {
-        return categories;
-    }
     public RecordsViewModel() {
         super();
         AppDatabase database = MainActivity.getDatabase();
