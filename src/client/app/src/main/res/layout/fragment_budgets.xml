@@ -22,20 +22,248 @@
         android:layout_marginEnd="16dp"/>
 
     <!-- EditText fields for each category -->
-    <EditText
-        android:id="@+id/editTextFood"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="Food Budget"
-        android:inputType="numberDecimal"
-        app:layout_constraintTop_toBottomOf="@id/text_budgets"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"/>
 
-    <!-- Repeat this EditText block for each category -->
+    <!-- Category 1 -->
+    <EditText
+        android:id="@+id/editTextCategory1"
+        android:layout_width="250dp"
+        android:layout_height="43dp"
+        android:layout_marginTop="12dp"
+        android:hint="Budget 1"
+        android:inputType="number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_budgets" />
+
+
+    <TextView
+        android:id="@+id/textCategory1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:text="Text"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_budgets" />
+
+    <!-- Category 2 -->
+    <EditText
+        android:id="@+id/editTextCategory2"
+        android:layout_width="250dp"
+        android:layout_height="43dp"
+        android:layout_marginTop="12dp"
+        android:hint="Budget 2"
+        android:inputType="number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editTextCategory1" />
+
+
+    <TextView
+        android:id="@+id/textCategory2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:text="Text"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextCategory1" />
+
+    <!-- Category 3 -->
+    <EditText
+        android:id="@+id/editTextCategory3"
+        android:layout_width="250dp"
+        android:layout_height="43dp"
+        android:layout_marginTop="12dp"
+        android:hint="Budget 3"
+        android:inputType="number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editTextCategory2" />
+
+    <TextView
+        android:id="@+id/textCategory3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:text="Text"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextCategory2" />
+
+    <!-- Category 4 -->
+    <EditText
+        android:id="@+id/editTextCategory4"
+        android:layout_width="250dp"
+        android:layout_height="43dp"
+        android:layout_marginTop="12dp"
+        android:hint="Budget 4"
+        android:inputType="number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editTextCategory3" />
+
+    <TextView
+        android:id="@+id/textCategory4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:text="Text"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextCategory3" />
+
+    <!-- Category 5 -->
+    <EditText
+        android:id="@+id/editTextCategory5"
+        android:layout_width="250dp"
+        android:layout_height="43dp"
+        android:layout_marginTop="12dp"
+        android:hint="Budget 5"
+        android:inputType="number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editTextCategory4" />
+
+    <TextView
+        android:id="@+id/textCategory5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:text="Text"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextCategory4" />
+
+    <!-- Category 6 -->
+    <EditText
+        android:id="@+id/editTextCategory6"
+        android:layout_width="250dp"
+        android:layout_height="43dp"
+        android:layout_marginTop="12dp"
+        android:hint="Budget 6"
+        android:inputType="number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editTextCategory5" />
+
+    <TextView
+        android:id="@+id/textCategory6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:text="Text"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextCategory5" />
+
+    <!-- Category 7 -->
+    <EditText
+        android:id="@+id/editTextCategory7"
+        android:layout_width="250dp"
+        android:layout_height="43dp"
+        android:layout_marginTop="12dp"
+        android:hint="Budget 7"
+        android:inputType="number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editTextCategory6" />
+
+    <TextView
+        android:id="@+id/textCategory7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:text="Text"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextCategory6" />
+
+    <!-- Category 8 -->
+    <EditText
+        android:id="@+id/editTextCategory8"
+        android:layout_width="250dp"
+        android:layout_height="43dp"
+        android:layout_marginTop="12dp"
+        android:hint="Budget 8"
+        android:inputType="number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editTextCategory7" />
+
+    <TextView
+        android:id="@+id/textCategory8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:text="Text"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextCategory7" />
+
+    <!-- Category 9 -->
+    <EditText
+        android:id="@+id/editTextCategory9"
+        android:layout_width="250dp"
+        android:layout_height="43dp"
+        android:layout_marginTop="12dp"
+        android:hint="Budget 9"
+        android:inputType="number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editTextCategory8" />
+
+    <TextView
+        android:id="@+id/textCategory9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:text="Text"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextCategory8" />
+
+    <!-- Category 10 -->
+    <EditText
+        android:id="@+id/editTextCategory10"
+        android:layout_width="250dp"
+        android:layout_height="43dp"
+        android:layout_marginTop="12dp"
+        android:hint="Budget 10"
+        android:inputType="number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editTextCategory9" />
+
+    <TextView
+        android:id="@+id/textCategory10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:text="Text"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextCategory9" />
 
     <Button
         android:id="@+id/buttonSave"

@@ -7,14 +7,10 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.expensetracker.data.Categories;
 import com.expensetracker.models.Transaction;
 import com.expensetracker.dao.TransactionDao;
 import com.expensetracker.data.AppDatabase;
 import com.expensetracker.MainActivity;
-
-import kotlinx.coroutines.Dispatchers;
-import kotlinx.coroutines.GlobalScope;
 
 public class RecordsViewModel extends ViewModel {
 

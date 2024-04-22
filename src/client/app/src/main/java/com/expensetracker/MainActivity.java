@@ -1,8 +1,10 @@
 package com.expensetracker;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import com.expensetracker.data.AppDatabase;
+import com.expensetracker.models.Categories;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,7 +35,13 @@ public class MainActivity extends AppCompatActivity {
         baseUrl = dotenv.get("BASE_URL");
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        Categories.createAllCategoriesAsync().thenRun(() -> {
+            Log.println(Log.DEBUG, "","Categories creation completed asynchronously.");
+            // Any follow-up actions you want to perform after categories creation
+        }).exceptionally(ex -> {
+            Log.println(Log.ERROR, "error","An error occurred: " + ex.getMessage());
+            return null;
+        });
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.

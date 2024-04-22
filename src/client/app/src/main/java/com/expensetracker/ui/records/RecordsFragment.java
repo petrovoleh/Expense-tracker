@@ -17,7 +17,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.expensetracker.R;
-import com.expensetracker.data.Categories;
+import com.expensetracker.models.Categories;
 
 public class RecordsFragment extends Fragment {
 
