@@ -92,4 +92,12 @@ public class Categories {
             return null;
         }
     }
+    public static Category getCategory(String name) {
+        for (Category category : categories) {
+            if (category.getName().equals(name)) {
+                return category;
+            }
+        }
+        return null; // Return null if category not found
+    }
 }
