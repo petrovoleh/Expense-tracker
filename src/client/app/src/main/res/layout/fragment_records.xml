@@ -15,7 +15,7 @@
         android:id="@+id/editTextValue"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Value"
+        android:hint="@string/value"
         android:inputType="numberDecimal"
         android:autofillHints="10.00" />
 
@@ -23,14 +23,15 @@
         android:id="@+id/editTextPlace"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Note"
-        android:autofillHints="" />
+        android:hint="@string/note"
+        android:autofillHints=""
+        android:inputType="text" />
 
     <Button
         android:id="@+id/buttonAddRecord"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add Record" />
+        android:text="@string/create_record" />
 
     <TextView
         android:id="@+id/textHome"

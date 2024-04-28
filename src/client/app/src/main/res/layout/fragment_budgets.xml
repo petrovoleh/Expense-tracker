@@ -7,19 +7,6 @@
     tools:context=".ui.home.HomeFragment">
 
     <!-- TextView for fragment title -->
-    <TextView
-        android:id="@+id/text_budgets"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Budgets"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"/>
 
     <!-- EditText fields for each category -->
 
@@ -28,27 +15,27 @@
         android:id="@+id/editTextCategory1"
         android:layout_width="250dp"
         android:layout_height="43dp"
-        android:layout_marginTop="12dp"
         android:hint="Budget 1"
         android:inputType="number"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.9"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_budgets" />
+        app:layout_constraintTop_toTopOf="parent" />
 
+
+    <!-- Category 2 -->
 
     <TextView
         android:id="@+id/textCategory1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="4dp"
         android:text="Text"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_budgets" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Category 2 -->
     <EditText
         android:id="@+id/editTextCategory2"
         android:layout_width="250dp"
@@ -269,7 +256,7 @@
         android:id="@+id/buttonSave"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="60dp"
         android:onClick="onSaveButtonClick"
         android:text="Save"
         app:layout_constraintBottom_toBottomOf="parent"

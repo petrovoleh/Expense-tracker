@@ -1,6 +1,7 @@
 package com.expensetracker.models;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import java.util.Date;
 
@@ -16,6 +17,7 @@ public class Transaction {
     public Transaction() {
     }
 
+    @Ignore
     public Transaction(String category, double value, String place) {
         this.category = category;
         this.value = value;

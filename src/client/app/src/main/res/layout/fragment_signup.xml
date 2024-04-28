@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/errorText"
         android:layout_marginTop="16dp"
-        android:hint="Username"
+        android:hint="@string/username"
         android:inputType="text" />
 
     <EditText
@@ -30,7 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/usernameEditText"
-        android:hint="Email"
+        android:hint="@string/email"
         android:inputType="textEmailAddress"
         android:layout_marginTop="16dp" />
 
@@ -40,7 +40,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/emailEditText"
-        android:hint="Password"
+        android:hint="@string/password"
         android:inputType="textPassword"
         android:layout_marginTop="16dp" />
 
@@ -50,7 +50,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/passwordEditText"
-        android:text="Sign Up"
+        android:text="@string/sign_up"
         android:layout_marginTop="24dp" />
 
     <!-- Terms and Privacy TextView -->
@@ -61,7 +61,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/passwordEditText"
         android:layout_marginTop="120dp"
-        android:text="I already have the account" />
+        android:text="@string/i_already_have_the_account" />
 
     <TextView
         android:id="@+id/termsPrivacyTextView"
@@ -78,7 +78,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/logoImageView"
         android:layout_marginTop="15dp"
-        android:text=" "
         android:textAlignment="center"
         android:textSize="16sp" />
 

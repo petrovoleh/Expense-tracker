@@ -45,7 +45,7 @@
     <fragment
         android:id="@+id/navigation_signup"
         android:name="com.expensetracker.ui.signup.SignUpFragment"
-        android:label="@string/title_signup"
+        android:label="@string/sign_up"
         tools:layout="@layout/fragment_signup" />
     <fragment
         android:id="@+id/navigation_profile"

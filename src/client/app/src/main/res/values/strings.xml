@@ -7,7 +7,6 @@
     <string name="title_home">Home</string>
     <string name="title_records">Records</string>
     <string name="title_account">Account</string>
-    <string name="title_signup">Sign Up</string>
     <string name="title_signin">Sign In</string>
     <string name="error_empty">Please fill in all fields</string>
     <string name="error_name_length">Name should not exceed 254 characters</string>
@@ -15,5 +14,23 @@
     <string name="error_email_length">Email should not exceed 254 characters</string>
     <string name="error_password_length">Password should be at least 6 characters long and not exceed 254 characters</string>
     <string name="error_password_criteria">Password should contain at least one uppercase letter, one lowercase letter, one digit, and one special character</string>
+    <string name="used">Used</string>
+    <string name="allocated">Allocated</string>
+    <string name="name">Name</string>
+    <string name="available">Available</string>
+    <string name="username">Username</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="i_already_have_the_account">I already have the account</string>
+    <string name="value">Value</string>
+    <string name="note">Note</string>
+    <string name="create_record">Create record</string>
+    <string name="new_record">New record</string>
+    <string name="filter_by_category">Filter by Category</string>
+    <string name="filter_by_date">Filter by Date</string>
+    <string name="sign_in">Sign In</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="create_new_account">Create new account</string>
 
 </resources>

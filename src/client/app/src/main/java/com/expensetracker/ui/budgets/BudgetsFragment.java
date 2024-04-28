@@ -71,7 +71,20 @@ public class BudgetsFragment extends Fragment {
             String text = editTextCategories[i].getText().toString();
             if (!text.isEmpty()) {
                 int budget = Integer.parseInt(text);
-                Categories.getCategories().get(i).setBudget(budget);
+                if (budget <= 100000) {
+                    if (budget > 0) {
+                    Categories.getCategories().get(i).setBudget(budget);
+                    }
+                    else{
+                        editTextCategories[i].setText("0");
+                        Categories.getCategories().get(i).setBudget(0);
+                    }
+
+                }
+                else{
+                    editTextCategories[i].setText("100000");
+                    Categories.getCategories().get(i).setBudget(100000);
+                }
             }
         }
         Categories.saveCategoriesToDatabase();
