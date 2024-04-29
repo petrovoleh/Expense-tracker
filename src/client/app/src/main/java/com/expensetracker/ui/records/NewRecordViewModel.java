@@ -8,16 +8,16 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.expensetracker.models.Transaction;
-import com.expensetracker.dao.TransactionDao;
-import com.expensetracker.data.AppDatabase;
+import com.expensetracker.database.TransactionDao;
+import com.expensetracker.database.AppDatabase;
 import com.expensetracker.MainActivity;
 
-public class RecordsViewModel extends ViewModel {
+public class NewRecordViewModel extends ViewModel {
 
     private final MutableLiveData<Transaction> mTransaction = new MutableLiveData<>();
     private final TransactionDao transactionDao;
 
-    public RecordsViewModel() {
+    public NewRecordViewModel() {
         super();
         AppDatabase database = MainActivity.getDatabase();
         transactionDao = database.transactionDao();

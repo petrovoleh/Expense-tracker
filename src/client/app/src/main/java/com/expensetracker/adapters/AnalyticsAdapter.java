@@ -1,4 +1,4 @@
-package com.expensetracker.data;
+package com.expensetracker.adapters;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,11 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.expensetracker.R;
 import com.expensetracker.data.Analytics;
-import com.expensetracker.data.AnalyticsAdapter;
-
-import java.text.SimpleDateFormat;
-import java.util.List;
-import java.util.Locale;
 
 public class AnalyticsAdapter extends RecyclerView.Adapter<AnalyticsAdapter.AnalyticsViewHolder> {
 
@@ -55,7 +50,7 @@ public class AnalyticsAdapter extends RecyclerView.Adapter<AnalyticsAdapter.Anal
 
     @Override
     public int getItemCount() {
-        return 10;
+        return analytics.size();
     }
 
     static class AnalyticsViewHolder extends RecyclerView.ViewHolder {

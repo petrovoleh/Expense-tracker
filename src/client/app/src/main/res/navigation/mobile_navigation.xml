@@ -34,7 +34,7 @@
         tools:layout="@layout/fragment_records_list" />
     <fragment
         android:id="@+id/navigation_new_record"
-        android:name="com.expensetracker.ui.records.RecordsFragment"
+        android:name="com.expensetracker.ui.records.NewRecordFragment"
         android:label="New Record"
         tools:layout="@layout/fragment_records" />
     <fragment

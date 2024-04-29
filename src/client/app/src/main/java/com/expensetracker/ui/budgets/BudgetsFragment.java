@@ -11,7 +11,7 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 import com.expensetracker.R;
-import com.expensetracker.models.Categories;
+import com.expensetracker.data.Categories;
 import com.expensetracker.models.Category;
 
 import java.util.List;

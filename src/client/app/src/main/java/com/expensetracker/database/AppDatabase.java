@@ -1,14 +1,15 @@
-package com.expensetracker.data;
+package com.expensetracker.database;
 
 import androidx.room.Database;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
-import com.expensetracker.dao.CategoryDao;
+import com.expensetracker.data.Converters;
+import com.expensetracker.database.CategoryDao;
 import com.expensetracker.models.Category;
 import com.expensetracker.models.Transaction;
 
-import com.expensetracker.dao.TransactionDao;
+import com.expensetracker.database.TransactionDao;
 
 @TypeConverters(Converters.class) // Register the Type Converter
 @Database(entities = {Transaction.class, Category.class}, version = 1)

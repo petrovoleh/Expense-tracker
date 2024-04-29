@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -18,12 +17,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.expensetracker.R;
-import com.expensetracker.models.Categories;
+import com.expensetracker.data.Categories;
 import com.expensetracker.models.Transaction;
-import com.expensetracker.models.TransactionAdapter;
+import com.expensetracker.adapters.TransactionAdapter;
 
 import java.util.Calendar;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
 

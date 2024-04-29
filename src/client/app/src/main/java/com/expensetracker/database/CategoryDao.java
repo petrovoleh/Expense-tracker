@@ -1,4 +1,4 @@
-package com.expensetracker.dao;
+package com.expensetracker.database;
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;

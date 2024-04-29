@@ -1,12 +1,8 @@
 package com.expensetracker.data;
 
-import android.util.Log;
-
-import androidx.lifecycle.Observer;
-
 import com.expensetracker.MainActivity;
-import com.expensetracker.dao.TransactionDao;
-import com.expensetracker.models.Categories;
+import com.expensetracker.database.AppDatabase;
+import com.expensetracker.database.TransactionDao;
 import com.expensetracker.models.Category;
 
 public class Analytics {
@@ -40,8 +36,8 @@ public class Analytics {
             if (spent == null) {
                 spent = 0.0;
             }
-            double available = all - spent;
-            String result = categoryName + " " + all + " " + spent + " " + available;
+            int available = (int)(all - spent);
+            String result = categoryName + " " + all + " " +  spent.intValue() + " " + available;
             callback.onAnalyticsResult(result);
         });
     }

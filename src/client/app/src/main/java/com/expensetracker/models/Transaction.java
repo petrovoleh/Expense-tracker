@@ -3,6 +3,8 @@ package com.expensetracker.models;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
+
+import java.text.DecimalFormat;
 import java.util.Date;
 
 @Entity(tableName = "transactions")
@@ -20,10 +22,14 @@ public class Transaction {
     @Ignore
     public Transaction(String category, double value, String place) {
         this.category = category;
-        this.value = value;
         this.place = place;
         this.time = new Date();
+
+        // Round the value to two decimal places
+        DecimalFormat df = new DecimalFormat("#.00");
+        this.value = Double.parseDouble(df.format(value));
     }
+
 
     public long getId() {
         return id;
@@ -46,7 +52,8 @@ public class Transaction {
     }
 
     public void setValue(double value) {
-        this.value = value;
+        DecimalFormat df = new DecimalFormat("#.00");
+        this.value = Double.parseDouble(df.format(value));
     }
 
     public String getPlace() {

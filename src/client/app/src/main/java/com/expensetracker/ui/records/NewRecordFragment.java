@@ -17,18 +17,18 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.expensetracker.R;
-import com.expensetracker.models.Categories;
+import com.expensetracker.data.Categories;
 
-public class RecordsFragment extends Fragment {
+public class NewRecordFragment extends Fragment {
 
-    private RecordsViewModel recordsViewModel;
+    private NewRecordViewModel newRecordViewModel;
     private EditText editTextValue;
     private EditText editTextPlace;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        recordsViewModel =
-                new ViewModelProvider(this).get(RecordsViewModel.class);
+        newRecordViewModel =
+                new ViewModelProvider(this).get(NewRecordViewModel.class);
 
         View root = inflater.inflate(R.layout.fragment_records, container, false);
 
@@ -56,7 +56,7 @@ public class RecordsFragment extends Fragment {
             double value = Double.parseDouble(valueText);
 
             // Call the method in ViewModel to add the transaction
-            recordsViewModel.addTransaction(category, value, place);
+            newRecordViewModel.addTransaction(category, value, place);
             // Получаем NavController из главной активности
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
 
