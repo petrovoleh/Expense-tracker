@@ -23,12 +23,7 @@ public class Analytics {
         StringBuilder builder = new StringBuilder();
         for (String name:names){
 
-            getAnalytics(name, new AnalyticsCallback() {
-                @Override
-                public void onAnalyticsResult(String result) {
-                    builder.append(result).append("\n");
-                }
-            });
+            getAnalytics(name, result -> builder.append(result).append("\n"));
 
         }
         String text = builder.toString();
@@ -41,16 +36,13 @@ public class Analytics {
         int all = category.getBudget();
 
         // Observe the LiveData for total value
-        transactionDao.getTotalValueForCategory(categoryName).observeForever(new Observer<Double>() {
-            @Override
-            public void onChanged(Double spent) {
-                if (spent == null) {
-                    spent = 0.0;
-                }
-                double available = all - spent;
-                String result = categoryName + " " + all + " " + spent + " " + available;
-                callback.onAnalyticsResult(result);
+        transactionDao.getTotalValueForCategory(categoryName).observeForever(spent -> {
+            if (spent == null) {
+                spent = 0.0;
             }
+            double available = all - spent;
+            String result = categoryName + " " + all + " " + spent + " " + available;
+            callback.onAnalyticsResult(result);
         });
     }
     public void setText(String text) {

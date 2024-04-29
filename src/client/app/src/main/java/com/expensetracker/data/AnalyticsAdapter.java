@@ -37,26 +37,39 @@ public class AnalyticsAdapter extends RecyclerView.Adapter<AnalyticsAdapter.Anal
     @Override
     public void onBindViewHolder(@NonNull AnalyticsAdapter.AnalyticsViewHolder holder, int position) {
         String [] names = analytics.getNames();
-        StringBuilder builder = new StringBuilder();
+        String[] rows = new String[10];
+
             analytics.getAnalytics(names[position], result -> {
-                builder.append(result);
-                holder.textViewAnalytics.setText(builder.toString());
-                Log.d("analytics", builder.toString()+"\n\n");
+                rows[position] = result;
+                String[] row = rows[position].split(" ");
+                holder.textName.setText(row[0]);
+                holder.textAllocated.setText(row[1]);
+                holder.textUsed.setText(row[2]);
+                holder.textAvailable.setText(row[3]);
+
+                Log.d("analytics", rows[position] + "\n\n");
+
             });
 
     }
 
     @Override
     public int getItemCount() {
-        return analytics.size();
+        return 10;
     }
 
     static class AnalyticsViewHolder extends RecyclerView.ViewHolder {
-        TextView textViewAnalytics;
+        TextView textName;
+        TextView textAllocated;
+        TextView textUsed;
+        TextView textAvailable;
 
         public AnalyticsViewHolder(@NonNull View itemView) {
             super(itemView);
-            textViewAnalytics = itemView.findViewById(R.id.textViewAnalytics);
+            textName = itemView.findViewById(R.id.textName);
+            textAllocated = itemView.findViewById(R.id.textAllocated);
+            textUsed = itemView.findViewById(R.id.textUsed);
+            textAvailable= itemView.findViewById(R.id.textAvailable);
         }
     }
 }
