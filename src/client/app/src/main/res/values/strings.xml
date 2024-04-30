@@ -27,7 +27,7 @@
     <string name="note">Note</string>
     <string name="create_record">Create record</string>
     <string name="new_record">New record</string>
-    <string name="filter_by_category">Filter by Category</string>
+    <string name="filter_by_category">by Category</string>
     <string name="filter_by_date">Filter by Date</string>
     <string name="sign_in">Sign In</string>
     <string name="forgot_password">Forgot Password?</string>

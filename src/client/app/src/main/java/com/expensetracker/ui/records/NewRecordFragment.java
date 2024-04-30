@@ -30,7 +30,7 @@ public class NewRecordFragment extends Fragment {
         newRecordViewModel =
                 new ViewModelProvider(this).get(NewRecordViewModel.class);
 
-        View root = inflater.inflate(R.layout.fragment_records, container, false);
+        View root = inflater.inflate(R.layout.fragment_new_record, container, false);
 
         Spinner spinnerCategory = root.findViewById(R.id.spinnerCategory);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_dropdown_item, Categories.getCategoriesNames());

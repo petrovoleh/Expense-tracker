@@ -13,14 +13,14 @@ public class Validator {
         // Name should not be empty
         if (name.isEmpty()) {
             text.setText(context.getString(R.string.error_empty));
-            return false;
+            return true;
         }
         // Name should not exceed maximum length
         if (name.length() > MAX_LENGTH) {
             text.setText(context.getString(R.string.error_name_length));
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
     public static boolean validateEmail(Context context, String email, TextView text) {
@@ -49,8 +49,7 @@ public class Validator {
             text.setText(context.getString(R.string.error_password_length));
             return false;
         }
-        // Additional validation criteria can be added here
-        // For example, requiring at least one uppercase letter, one lowercase letter, one digit, and one special character
+        // Requiring at least one uppercase letter, one lowercase letter, one digit, and one special character
         if (!Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$").matcher(password).matches()) {
             text.setText(context.getString(R.string.error_password_criteria));
             return false;

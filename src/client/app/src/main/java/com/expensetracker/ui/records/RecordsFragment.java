@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -21,20 +23,35 @@ import com.expensetracker.data.Categories;
 import com.expensetracker.models.Transaction;
 import com.expensetracker.adapters.TransactionAdapter;
 
+import java.text.DateFormatSymbols;
 import java.util.Calendar;
 import java.util.List;
 import java.util.ArrayList;
 
-public class RecordsListFragment extends Fragment {
+public class RecordsFragment extends Fragment {
 
-    private RecordsListViewModel recordsListViewModel;
+    private RecordsViewModel recordsViewModel;
     private RecyclerView recyclerViewTransactions;
     private TransactionAdapter transactionAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        recordsListViewModel = new ViewModelProvider(this).get(RecordsListViewModel.class);
+        recordsViewModel = new ViewModelProvider(this).get(RecordsViewModel.class);
         View root = inflater.inflate(R.layout.fragment_records_list, container, false);
+
+
+        TextView month = root.findViewById(R.id.month);
+        Calendar calendar = Calendar.getInstance();
+        int monthNumber = calendar.get(Calendar.MONTH);
+
+        String[] monthNames = new DateFormatSymbols().getMonths();
+
+        if (monthNumber < monthNames.length) {
+            String monthString = monthNames[monthNumber];
+            month.setText(monthString);
+        }
+
+            // Assuming 'month' is a TextView where you want to display the month string
 
         recyclerViewTransactions = root.findViewById(R.id.recyclerViewTransactions);
         recyclerViewTransactions.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -43,7 +60,7 @@ public class RecordsListFragment extends Fragment {
         transactionAdapter = new TransactionAdapter(new ArrayList<>());
         recyclerViewTransactions.setAdapter(transactionAdapter);
 
-        Button newRecordButton = root.findViewById(R.id.newRecordButton);
+        ImageButton newRecordButton = root.findViewById(R.id.newRecordButton);
         Button filterCategoryButton = root.findViewById(R.id.filterCategoryButton);
         Button filterDateButton = root.findViewById(R.id.filterDateButton);
 
@@ -62,7 +79,7 @@ public class RecordsListFragment extends Fragment {
 
         filterDateButton.setOnClickListener(v -> showDatePicker());
 
-        recordsListViewModel.getTransactions().observe(getViewLifecycleOwner(), new Observer<List<Transaction>>() {
+        recordsViewModel.getTransactions().observe(getViewLifecycleOwner(), new Observer<List<Transaction>>() {
             @Override
             public void onChanged(List<Transaction> transactions) {
                 transactionAdapter.setTransactions(transactions);
@@ -76,8 +93,8 @@ public class RecordsListFragment extends Fragment {
     public void onResume() {
 
         super.onResume();
-        recordsListViewModel.showAllCategories();
-        recordsListViewModel.getTransactions().observe(getViewLifecycleOwner(), new Observer<List<Transaction>>() {
+        recordsViewModel.showAllCategories();
+        recordsViewModel.getTransactions().observe(getViewLifecycleOwner(), new Observer<List<Transaction>>() {
             @Override
             public void onChanged(List<Transaction> transactions) {
                 transactionAdapter.setTransactions(transactions);
@@ -88,12 +105,12 @@ public class RecordsListFragment extends Fragment {
     // Method to filter transactions by category
     public void filterByCategory(String category) {
         if(category.equals("Show all")){
-            recordsListViewModel.showAllCategories();
+            recordsViewModel.showAllCategories();
         }
         else {
-            recordsListViewModel.setCategoryFilter(category);
+            recordsViewModel.setCategoryFilter(category);
         }
-        recordsListViewModel.getTransactions().observe(getViewLifecycleOwner(), new Observer<List<Transaction>>() {
+        recordsViewModel.getTransactions().observe(getViewLifecycleOwner(), new Observer<List<Transaction>>() {
             @Override
             public void onChanged(List<Transaction> transactions) {
                 transactionAdapter.setTransactions(transactions);
@@ -103,8 +120,8 @@ public class RecordsListFragment extends Fragment {
 
     // Method to filter transactions by date
     public void filterByDate(Calendar date1,Calendar date2) {
-        recordsListViewModel.setDateFilter(date1, date2);
-        recordsListViewModel.getTransactions().observe(getViewLifecycleOwner(), new Observer<List<Transaction>>() {
+        recordsViewModel.setDateFilter(date1, date2);
+        recordsViewModel.getTransactions().observe(getViewLifecycleOwner(), new Observer<List<Transaction>>() {
             @Override
             public void onChanged(List<Transaction> transactions) {
                 transactionAdapter.setTransactions(transactions);

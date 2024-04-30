@@ -29,14 +29,14 @@
 
     <fragment
         android:id="@+id/navigation_records"
-        android:name="com.expensetracker.ui.records.RecordsListFragment"
+        android:name="com.expensetracker.ui.records.RecordsFragment"
         android:label="@string/title_records"
         tools:layout="@layout/fragment_records_list" />
     <fragment
         android:id="@+id/navigation_new_record"
         android:name="com.expensetracker.ui.records.NewRecordFragment"
         android:label="New Record"
-        tools:layout="@layout/fragment_records" />
+        tools:layout="@layout/fragment_new_record" />
     <fragment
         android:id="@+id/navigation_signin"
         android:name="com.expensetracker.ui.signin.SignInFragment"

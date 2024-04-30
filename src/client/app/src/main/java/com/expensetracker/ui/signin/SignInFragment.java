@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import io.github.cdimascio.dotenv.Dotenv;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -19,7 +19,6 @@ import com.expensetracker.MainActivity;
 import com.expensetracker.R;
 import com.expensetracker.data.FileManager;
 import com.expensetracker.databinding.FragmentSigninBinding;
-import com.expensetracker.ui.signup.SignUpFragment;
 import com.expensetracker.validators.Validator;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.net.ConnectivityManager;
@@ -82,8 +81,8 @@ public class SignInFragment extends Fragment {
     private void signIn() {
         String username = usernameEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
-        if(!Validator.validateName(getContext(), username,errorText)
-                || !Validator.validateName(getContext(),password,errorText)
+        if(Validator.validateName(getContext(), username, errorText)
+                || Validator.validateName(getContext(), password, errorText)
         ){
             return;
         }

@@ -85,7 +85,7 @@ public class SignUpFragment extends Fragment {
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
         if(
-        !Validator.validateName(getContext(), username,errorText) ||
+        Validator.validateName(getContext(), username, errorText) ||
         !Validator.validateEmail(getContext(),email,errorText) ||
         !Validator.validatePassword(getContext(),password,errorText)
         ){
