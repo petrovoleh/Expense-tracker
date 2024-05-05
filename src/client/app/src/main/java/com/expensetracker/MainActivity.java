@@ -24,17 +24,19 @@ public class MainActivity extends AppCompatActivity {
     private static AppDatabase database;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         database = Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "transaction-db").build();
+        Categories.createAllCategoriesAsync();
         Dotenv dotenv = Dotenv.configure()
                 .directory("./assets")
                 .filename("env") // instead of '.env', use 'env'
                 .load();
+        super.onCreate(savedInstanceState);
+
         baseUrl = dotenv.get("BASE_URL");
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        Categories.createAllCategoriesAsync();
+
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each

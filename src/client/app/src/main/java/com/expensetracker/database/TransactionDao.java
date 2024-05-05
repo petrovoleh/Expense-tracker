@@ -20,7 +20,7 @@ public interface TransactionDao {
     @Query("SELECT * FROM transactions WHERE category = :category")
     LiveData<List<Transaction>> getTransactionsByCategory(String category);
     @Query("SELECT SUM(value) FROM transactions WHERE category = :category")
-    LiveData<Double> getTotalValueForCategory(String category);
+    Double getTotalValueForCategory(String category);
 
     // Query method to get transactions filtered by date
     @Query("SELECT * FROM transactions WHERE time >= :startDate AND time <= :endDate")

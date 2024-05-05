@@ -22,11 +22,14 @@ import com.expensetracker.R;
 import com.expensetracker.data.Categories;
 import com.expensetracker.models.Transaction;
 import com.expensetracker.adapters.TransactionAdapter;
+import com.expensetracker.suggestions.Suggestion;
 
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class RecordsFragment extends Fragment {
 
@@ -63,6 +66,7 @@ public class RecordsFragment extends Fragment {
         ImageButton newRecordButton = root.findViewById(R.id.newRecordButton);
         Button filterCategoryButton = root.findViewById(R.id.filterCategoryButton);
         Button filterDateButton = root.findViewById(R.id.filterDateButton);
+
 
 
         newRecordButton.setOnClickListener(new View.OnClickListener() {

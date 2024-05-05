@@ -71,10 +71,6 @@ public class Categories {
     }
 
 
-
-
-
-
     public static List<Category> getCategories() {
 
         return categories;
@@ -98,6 +94,14 @@ public class Categories {
         }
     }
     public static Category getCategory(String name) {
+        while(categories == null) {
+            Log.d("categories", "not created");
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         for (Category category : categories) {
             if (category.getName().equals(name)) {
                 return category;
