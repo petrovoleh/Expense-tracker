@@ -25,9 +25,11 @@ import com.expensetracker.adapters.TransactionAdapter;
 import com.expensetracker.suggestions.Suggestion;
 
 import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -36,25 +38,15 @@ public class RecordsFragment extends Fragment {
     private RecordsViewModel recordsViewModel;
     private RecyclerView recyclerViewTransactions;
     private TransactionAdapter transactionAdapter;
-
+private TextView month;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         recordsViewModel = new ViewModelProvider(this).get(RecordsViewModel.class);
         View root = inflater.inflate(R.layout.fragment_records_list, container, false);
 
 
-        TextView month = root.findViewById(R.id.month);
-        Calendar calendar = Calendar.getInstance();
-        int monthNumber = calendar.get(Calendar.MONTH);
-
-        String[] monthNames = new DateFormatSymbols().getMonths();
-
-        if (monthNumber < monthNames.length) {
-            String monthString = monthNames[monthNumber];
-            month.setText(monthString);
-        }
-
-            // Assuming 'month' is a TextView where you want to display the month string
+        month = root.findViewById(R.id.month);
+        selectParticularMonth();
 
         recyclerViewTransactions = root.findViewById(R.id.recyclerViewTransactions);
         recyclerViewTransactions.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -110,9 +102,11 @@ public class RecordsFragment extends Fragment {
     public void filterByCategory(String category) {
         if(category.equals("Show all")){
             recordsViewModel.showAllCategories();
+            selectParticularMonth();
         }
         else {
             recordsViewModel.setCategoryFilter(category);
+            month.setText(category);
         }
         recordsViewModel.getTransactions().observe(getViewLifecycleOwner(), new Observer<List<Transaction>>() {
             @Override
@@ -120,10 +114,11 @@ public class RecordsFragment extends Fragment {
                 transactionAdapter.setTransactions(transactions);
             }
         });
+
     }
 
     // Method to filter transactions by date
-    public void filterByDate(Calendar date1,Calendar date2) {
+    public void filterByDate(Calendar date1, Calendar date2) {
         recordsViewModel.setDateFilter(date1, date2);
         recordsViewModel.getTransactions().observe(getViewLifecycleOwner(), new Observer<List<Transaction>>() {
             @Override
@@ -131,6 +126,26 @@ public class RecordsFragment extends Fragment {
                 transactionAdapter.setTransactions(transactions);
             }
         });
+
+        // Format the months for display
+        SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM", Locale.getDefault());
+        String formattedMonth1 = monthFormat.format(date1.getTime());
+        String formattedMonth2 = monthFormat.format(date2.getTime());
+        if(formattedMonth1.equals(formattedMonth2))
+            month.setText(formattedMonth1);
+        else
+            month.setText(formattedMonth1 + " - " + formattedMonth2);
+    }
+    private void selectParticularMonth(){
+        Calendar calendar = Calendar.getInstance();
+        int monthNumber = calendar.get(Calendar.MONTH);
+
+        String[] monthNames = new DateFormatSymbols().getMonths();
+
+        if (monthNumber < monthNames.length) {
+            String monthString = monthNames[monthNumber];
+            month.setText(monthString);
+        }
     }
 
     // Method to show a dialog for selecting category filter
@@ -154,7 +169,7 @@ public class RecordsFragment extends Fragment {
     private void showDatePicker() {
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
+        int monthN = calendar.get(Calendar.MONTH);
         int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
 
         DatePickerDialog.OnDateSetListener dateSetListener = (view, year1, monthOfYear, dayOfMonth1) -> {
@@ -167,10 +182,10 @@ public class RecordsFragment extends Fragment {
                 filterByDate(fromDate, toDate);
             };
 
-            new DatePickerDialog(requireContext(), toDateListener, year, month, dayOfMonth).show();
+            new DatePickerDialog(requireContext(), toDateListener, year, monthN, dayOfMonth).show();
         };
 
-        DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(), dateSetListener, year, month, dayOfMonth);
+        DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(), dateSetListener, year, monthN, dayOfMonth);
         datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
         datePickerDialog.show();
     }

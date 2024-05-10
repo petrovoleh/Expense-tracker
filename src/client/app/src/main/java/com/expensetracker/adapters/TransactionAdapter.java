@@ -7,14 +7,16 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.expensetracker.R;
+import com.expensetracker.data.Currencies;
 import com.expensetracker.models.Transaction;
 
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.TransactionViewHolder> {
-
+    private final NumberFormat currency = Currencies.currency;
     private List<Transaction> transactions;
     private TransactionViewHolder holder;
 
@@ -40,7 +42,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         Locale currentLocale = Locale.getDefault();
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm", currentLocale);
         String formattedDate = dateFormat.format(transaction.getTime());
-        String text = formattedDate + " " + transaction.getCategory() + "\n" + transaction.getPlace() + " " + transaction.getValue() + " EUR";
+        String text = formattedDate + " " + transaction.getCategory() + "\n" + transaction.getPlace() + " " + currency.format(transaction.getValue());
         holder.textViewTransaction.setText(text);
     }
 

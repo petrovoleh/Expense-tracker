@@ -5,7 +5,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -14,12 +17,12 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import com.expensetracker.R;
 import com.expensetracker.data.FileManager;
+import com.expensetracker.data.Currencies;
 import com.expensetracker.databinding.FragmentProfileBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import java.io.IOException;
 
 public class ProfileFragment extends Fragment {
 
@@ -76,6 +79,24 @@ public class ProfileFragment extends Fragment {
                 navController.navigate(R.id.navigation_signin);
             }
         });
+
+
+        Spinner spinnerCurrency = root.findViewById(R.id.spinnerCurrency);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_dropdown_item, Currencies.getCurrenciesNames());
+        spinnerCurrency.setAdapter(adapter);
+        spinnerCurrency.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedCurrency = (String) parent.getItemAtPosition(position);
+                Currencies.setCurrency(selectedCurrency);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Do nothing
+            }
+        });
+
         return root;
     }
     @Override

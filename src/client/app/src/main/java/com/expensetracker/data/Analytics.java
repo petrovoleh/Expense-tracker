@@ -1,8 +1,5 @@
 package com.expensetracker.data;
 
-import androidx.documentfile.provider.DocumentFile;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
@@ -14,16 +11,16 @@ import com.expensetracker.database.TransactionDao;
 import com.expensetracker.models.Category;
 
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.text.NumberFormat;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
 public class Analytics {
+    private final NumberFormat currency = Currencies.currency;
     private String text;
     private final TransactionDao transactionDao;
     private final String[] names = Categories.getCategoriesNames();
@@ -82,7 +79,7 @@ public class Analytics {
             int available = (int) (all - spent);
 
             // Prepare result
-            String result = categoryName + " " + all + " " + spent.intValue() + " " + available;
+            String result = categoryName + " " + currency.format(all) + " " + currency.format(spent.intValue()) + " " + currency.format(available);
 
             // Deliver the result on the main thread
             callback.onAnalyticsResult(result);
@@ -131,7 +128,7 @@ public class Analytics {
                 }
                 int available = (int) (budget - spent);
                 // Write data
-                writer.write(name + "," + budget + "," + spent.intValue() + "," + available + "\n");
+                writer.write(name + "," + currency.format(budget) + "," + currency.format(spent.intValue()) + "," + currency.format(available) + "\n");
             }
 
             writer.flush();
@@ -163,7 +160,7 @@ public class Analytics {
                 }
                 int available = (int) (budget - spent);
                 // Add data
-                document.add(new Paragraph(name + "   " + budget + "   " + spent.intValue() + "   " + available));
+                document.add(new Paragraph(name + "   " + currency.format(budget) + "   " + currency.format(spent.intValue()) + "   " + currency.format(available)));
             }
 
         } catch (Exception e) {
