@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.expensetracker.adapters.SuggestionsAdapter;
 import com.expensetracker.data.Categories;
+import com.expensetracker.data.Notifications;
 import com.expensetracker.databinding.FragmentHomeBinding;
 import com.expensetracker.suggestions.Suggestion;
 import com.expensetracker.ui.records.RecordsViewModel;
@@ -27,6 +28,7 @@ public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
     private List<String> suggestions;
+    private List<String> notificationsList;
     private HomeViewModel homeViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -42,6 +44,8 @@ public class HomeFragment extends Fragment {
         executor.execute(() -> {
             Suggestion suggestion = new Suggestion();
             suggestions = suggestion.getSuggestions();
+            Notifications notifications = new Notifications();
+            notificationsList = notifications.getNotifications();
             // Update UI on the main thread
             getActivity().runOnUiThread(this::updateText);
             executor.shutdown();
@@ -52,6 +56,7 @@ public class HomeFragment extends Fragment {
     private void updateText() {
         RecyclerView recyclerView = binding.recyclerViewSuggestions;
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        suggestions.addAll(notificationsList);
         SuggestionsAdapter adapter = new SuggestionsAdapter(suggestions);
         recyclerView.setAdapter(adapter);
     }

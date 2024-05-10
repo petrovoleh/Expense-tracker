@@ -54,7 +54,9 @@ public class NewRecordFragment extends Fragment {
 
             // Convert value to double if it's not empty
             double value = Double.parseDouble(valueText);
-
+            if(value >100000.0){
+                value = 100000.0;
+            }
             // Call the method in ViewModel to add the transaction
             newRecordViewModel.addTransaction(category, value, place);
             // Получаем NavController из главной активности
