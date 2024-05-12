@@ -52,7 +52,7 @@ private TextView month;
         recyclerViewTransactions.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Create an adapter with an empty list of transactions
-        transactionAdapter = new TransactionAdapter(new ArrayList<>());
+        transactionAdapter = new TransactionAdapter(getContext(), new ArrayList<>());
         recyclerViewTransactions.setAdapter(transactionAdapter);
 
         ImageButton newRecordButton = root.findViewById(R.id.newRecordButton);

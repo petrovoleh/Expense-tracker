@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.text.NumberFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -24,11 +26,14 @@ public class Analytics {
     private String text;
     private final TransactionDao transactionDao;
     private final String[] names = Categories.getCategoriesNames();
-
+    Date startDate;
     public Analytics() {
         text = new String();
         AppDatabase database = MainActivity.getDatabase();
         transactionDao = database.transactionDao();
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH, 1); // Set the day to 1 to get the first day of the month
+        startDate = calendar.getTime();
     }
 
     public String getAllAnalytics() {
@@ -54,7 +59,7 @@ public class Analytics {
         int all = category.getBudget();
 
         // Observe the LiveData for total value
-        Double spent = transactionDao.getTotalValueForCategory(categoryName);
+        Double spent = transactionDao.getTotalValueForCategory(categoryName,startDate);
         if (spent == null) {
             spent = 0.0;
         }
@@ -70,7 +75,7 @@ public class Analytics {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
             // Fetch total value from the database
-            Double spent = transactionDao.getTotalValueForCategory(categoryName);
+            Double spent = transactionDao.getTotalValueForCategory(categoryName,startDate);
             if (spent == null) {
                 spent = 0.0;
             }
@@ -122,7 +127,7 @@ public class Analytics {
                 Category category = Categories.getCategory(name);
                 assert category != null;
                 int budget = category.getBudget();
-                Double spent = transactionDao.getTotalValueForCategory(name);
+                Double spent = transactionDao.getTotalValueForCategory(name,startDate);
                 if (spent == null) {
                     spent = 0.0;
                 }
@@ -154,7 +159,7 @@ public class Analytics {
                 Category category = Categories.getCategory(name);
                 assert category != null;
                 int budget = category.getBudget();
-                Double spent = transactionDao.getTotalValueForCategory(name);
+                Double spent = transactionDao.getTotalValueForCategory(name,startDate);
                 if (spent == null) {
                     spent = 0.0;
                 }

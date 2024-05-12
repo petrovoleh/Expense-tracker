@@ -29,7 +29,6 @@ public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
     private List<String> suggestions;
     private List<String> notificationsList;
-    private HomeViewModel homeViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {

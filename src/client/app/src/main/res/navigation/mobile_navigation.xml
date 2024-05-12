@@ -52,4 +52,9 @@
         android:name="com.expensetracker.ui.profile.ProfileFragment"
         android:label="@string/title_account"
         tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/navigation_edit_profile"
+        android:name="com.expensetracker.ui.profile.EditProfileFragment"
+        android:label="@string/title_account"
+        tools:layout="@layout/fragment_edit_profile" />
 </navigation>

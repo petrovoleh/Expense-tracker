@@ -64,8 +64,11 @@ public class Notifications {
             sumAvailable += analytics.getAvailable(category);
         }
 
-        if (daysLeft > 1 && sumAvailable < sumAllocated / 5)
+        if (daysLeft > 1 && (sumAvailable < sumAllocated / 5 && sumAvailable > 0))
             return "You almost used all money allocated for this month: " + Currencies.currency.format(sumAvailable) + " from " + Currencies.currency.format(sumAllocated) + " try to reduce your expenses.";
+        if (daysLeft > 1 && sumAvailable < 0)
+            return "You you spent "+ Currencies.currency.format(-1*sumAvailable) + " more then allocated for this month: try to reduce your expenses.";
+
         return null;
     }
 

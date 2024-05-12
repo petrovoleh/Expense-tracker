@@ -95,9 +95,8 @@ public class Categories {
     }
     public static Category getCategory(String name) {
         while(categories == null) {
-            Log.d("categories", "not created");
             try {
-                Thread.sleep(100);
+                Thread.sleep(200);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

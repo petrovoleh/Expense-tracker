@@ -2,6 +2,7 @@ package com.expensetracker;
 
 import android.os.Bundle;
 
+import com.expensetracker.data.Currencies;
 import com.expensetracker.database.AppDatabase;
 import com.expensetracker.data.Categories;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -15,6 +16,8 @@ import androidx.room.Room;
 
 import com.expensetracker.databinding.ActivityMainBinding;
 
+import java.util.Currency;
+
 import io.github.cdimascio.dotenv.Dotenv;
 
 public class MainActivity extends AppCompatActivity {
@@ -24,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
     private static AppDatabase database;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        Currencies.createFormat(getApplicationContext());
         database = Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "transaction-db").build();
         Categories.createAllCategoriesAsync();

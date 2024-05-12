@@ -1,7 +1,22 @@
-<!-- item_transaction.xml -->
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/textViewTransaction"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="16dp"
-    android:textSize="18sp"/>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:orientation="horizontal"
+android:padding="16dp">
+
+    <TextView
+        android:id="@+id/textViewTransaction"
+        android:layout_width="270dp"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/buttonDelete"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Delete" />
+
+
+</LinearLayout>

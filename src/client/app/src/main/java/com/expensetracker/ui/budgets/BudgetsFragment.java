@@ -1,5 +1,7 @@
 package com.expensetracker.ui.budgets;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +37,13 @@ public class BudgetsFragment extends Fragment {
 
         // Set onClickListener for Save button
         Button saveButton = root.findViewById(R.id.buttonSave);
+        Button buttonClear = root.findViewById(R.id.buttonClear);
+        buttonClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clearBudgets();
+            }
+        });
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,6 +62,28 @@ public class BudgetsFragment extends Fragment {
             int textId = getResources().getIdentifier("textCategory" + (i + 1), "id", requireContext().getPackageName());
             textCategories[i] = root.findViewById(textId);
         }
+    }
+
+    private void clearBudgets(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setMessage("Are you sure you want to clear all budgets?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                clearAllBudgets();
+            }
+        });
+        builder.setNegativeButton("No", null);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void clearAllBudgets() {
+        for (int i = 0; i < 10; i++) {
+            Categories.getCategories().get(i).setBudget(100);
+            editTextCategories[i].setText("100");
+        }
+        Categories.saveCategoriesToDatabase();
     }
     private void loadValues() {
         List<Category> categories = Categories.getCategories();

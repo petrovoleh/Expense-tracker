@@ -1,6 +1,8 @@
 package com.expensetracker.ui.profile;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +10,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -23,6 +27,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.File;
 
 public class ProfileFragment extends Fragment {
 
@@ -44,7 +50,13 @@ public class ProfileFragment extends Fragment {
 
         binding = FragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
+        File avatarFile = new File(requireContext().getFilesDir(), "avatars/avatar.jpg");
+        if (avatarFile.exists()) {
+            // If the file exists, load the image into ImageView
+            Bitmap bitmap = BitmapFactory.decodeFile(avatarFile.getAbsolutePath());
+            ImageView imageView = root.findViewById(R.id.imageView);
+            imageView.setImageBitmap(bitmap);
+        }
         // Check if account data exists in the file
         if (!checkAccountData()) {
             // If data doesn't exist, navigate the user to the sign-in page
@@ -67,7 +79,8 @@ public class ProfileFragment extends Fragment {
                 e.printStackTrace();
             }
         }
-        Button exitButton = root.findViewById(R.id.exit);
+        Button exitButton = root.findViewById(R.id.back);
+        Button editButton = root.findViewById(R.id.editButton);
         exitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -79,7 +92,16 @@ public class ProfileFragment extends Fragment {
                 navController.navigate(R.id.navigation_signin);
             }
         });
+        Button deleteButton = root.findViewById(R.id.deleteButton);
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
 
+                // Навигация к навигационному пункту signup
+                navController.navigate(R.id.navigation_edit_profile);
+            }
+        });
 
         Spinner spinnerCurrency = root.findViewById(R.id.spinnerCurrency);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_dropdown_item, Currencies.getCurrenciesNames());
@@ -89,6 +111,14 @@ public class ProfileFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedCurrency = (String) parent.getItemAtPosition(position);
                 Currencies.setCurrency(selectedCurrency);
+                JSONObject accountData = fileManager.readFromFile("accountdata.json");
+                try {
+                    accountData.put("currency", selectedCurrency);
+                    fileManager.writeToFile("accountdata.json", accountData);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Toast.makeText(requireContext(), "Currency changed", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override

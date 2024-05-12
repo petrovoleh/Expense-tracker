@@ -1,13 +1,19 @@
 package com.expensetracker.data;
 
+import static androidx.core.content.ContentProviderCompat.requireContext;
+
+import android.content.Context;
 import android.util.Log;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.NumberFormat;
 import java.util.Currency;
 import java.util.Locale;
 
 public class Currencies {
-    public static NumberFormat currency = createFormat();
+    public static NumberFormat currency;
     private final static String[] currenciesNames = {
             "EUR", // Euro
             "UAH", // Ukrainian Hryvnia
@@ -24,11 +30,23 @@ public class Currencies {
             "NZD", // New Zealand Dollar
             "HKD"  // Hong Kong Dollar
     };
-    private static NumberFormat createFormat(){
-        NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("lt", "LT"));
-        format.setMaximumFractionDigits(0);
-        format.setCurrency(Currency.getInstance("EUR"));
-        return format;
+    public static void createFormat(Context context) {
+        try {
+            FileManager fileManager = new FileManager(context);
+            JSONObject accountData = fileManager.readFromFile("accountdata.json");
+            if (accountData != null && accountData.has("currency")) {
+                String currencyCode = accountData.getString("currency");
+                setCurrency(currencyCode);
+            } else {
+                // Default currency if no currency is set in the file
+                setCurrency("EUR");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            // Handle JSON parsing error
+            setCurrency("EUR");
+        }
+
     }
     public static void setCurrency(String currencyName) {
         Locale locale;
