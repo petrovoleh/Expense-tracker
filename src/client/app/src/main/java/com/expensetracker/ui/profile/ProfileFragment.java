@@ -1,6 +1,8 @@
 package com.expensetracker.ui.profile;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -19,6 +21,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+
+import com.expensetracker.MainActivity;
 import com.expensetracker.R;
 import com.expensetracker.data.FileManager;
 import com.expensetracker.data.Currencies;
@@ -29,6 +33,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class ProfileFragment extends Fragment {
 
@@ -85,6 +96,11 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 fileManager.writeToFile("accountdata.json", new JSONObject());
+                // Delete the avatar file
+                File avatarFile = new File(requireContext().getFilesDir(), "avatars/avatar.jpg");
+                if (avatarFile.exists()) {
+                    avatarFile.delete();
+                }
                 // Получаем NavController из главной активности
                 NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
 
@@ -92,7 +108,38 @@ public class ProfileFragment extends Fragment {
                 navController.navigate(R.id.navigation_signin);
             }
         });
+
+        Button changePasswordButton = root.findViewById(R.id.changePasswordButton);
+        changePasswordButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+
+                // Навигация к навигационному пункту signup
+                navController.navigate(R.id.navigation_change_password);
+            }
+        });
         Button deleteButton = root.findViewById(R.id.deleteButton);
+        // Inside your deleteButton OnClickListener
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Show a confirmation dialog
+                new AlertDialog.Builder(requireContext())
+                        .setTitle("Confirm Deletion")
+                        .setMessage("Are you sure you want to delete your account?")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // User confirmed, proceed with account deletion
+                                deleteAccount();
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, null)
+                        .show();
+            }
+        });
+
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -128,6 +175,68 @@ public class ProfileFragment extends Fragment {
         });
 
         return root;
+    }
+    private String getTokenFromFile() {
+        JSONObject accountData = fileManager.readFromFile("accountdata.json");
+        try {
+            if (accountData != null && accountData.has("accessToken")) {
+                return accountData.getString("accessToken");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    private void deleteAccount(){
+        OkHttpClient client = new OkHttpClient();
+        String token = getTokenFromFile();
+        // Create DELETE request to the delete account endpoint
+        Request request = new Request.Builder()
+                .delete()
+                .url(MainActivity.baseUrl+"/api/auth/delete")
+                .addHeader("Authorization", "Bearer " + token)
+                .build();
+
+        // Execute request asynchronously
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+                requireActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(requireContext(), "Failed to delete account. Please try again.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                final String responseData = response.body().string();
+                requireActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        System.out.println(responseData);
+                        // Handle response here
+                        Toast.makeText(requireContext(), responseData, Toast.LENGTH_SHORT).show();
+                        if (response.isSuccessful()) {
+                            // After sending the request, you may perform additional local cleanup
+                            fileManager.writeToFile("accountdata.json", new JSONObject());
+                            File avatarFile = new File(requireContext().getFilesDir(), "avatars/avatar.jpg");
+                            if (avatarFile.exists()) {
+                                avatarFile.delete();
+                            }
+
+                            // Navigate to the sign-in screen
+                            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+                            navController.navigate(R.id.navigation_signin);
+                        }
+                    }
+                });
+            }
+        });
+
+
     }
     @Override
     public void onResume() {

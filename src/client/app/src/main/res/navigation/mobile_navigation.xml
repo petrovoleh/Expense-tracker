@@ -22,6 +22,12 @@
         tools:layout="@layout/fragment_budgets" />
 
     <fragment
+        android:id="@+id/navigation_change_password"
+        android:name="com.expensetracker.ui.profile.ChangePasswordFragment"
+        android:label="@string/title_budgets"
+        tools:layout="@layout/fragment_change_password" />
+
+    <fragment
         android:id="@+id/navigation_home"
         android:name="com.expensetracker.ui.home.HomeFragment"
         android:label="@string/title_home"

@@ -56,4 +56,11 @@ public class Validator {
         }
         return true;
     }
+    public static boolean validateTwoPasswords(Context context, String password, String password2, TextView text) {
+        if (!password.equals(password2)) {
+            text.setText("Passwords should be the same");
+            return true;
+        }
+        return false;
+    }
 }

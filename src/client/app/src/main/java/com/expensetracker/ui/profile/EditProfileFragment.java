@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,10 +29,12 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.expensetracker.MainActivity;
 import com.expensetracker.R;
 import com.expensetracker.data.Currencies;
 import com.expensetracker.data.FileManager;
 import com.expensetracker.databinding.FragmentEditProfileBinding;
+import com.expensetracker.validators.Validator;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
@@ -41,6 +44,15 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class EditProfileFragment extends Fragment {
 
@@ -112,9 +124,17 @@ public class EditProfileFragment extends Fragment {
             public void onClick(View v) {
                 String username = binding.editTextName.getText().toString().trim();
                 String email = binding.editTextEmail.getText().toString().trim();
-                saveAccountData(username, email);
-                Toast.makeText(requireContext(), "Account data saved", Toast.LENGTH_SHORT).show();
-            }
+                if(Validator.validateName(getContext(), username, binding.editTextName)
+                        || Validator.validateEmail(getContext(), email, binding.editTextEmail)
+                    ){
+                        saveAccountData(username, email);
+                        Toast.makeText(requireContext(), "Account data saved", Toast.LENGTH_SHORT).show();
+
+                    }else{
+                    Toast.makeText(requireContext(), "Account data was not saved", Toast.LENGTH_SHORT).show();
+
+                }
+                }
         });
 
         Button backButton = root.findViewById(R.id.back);
@@ -127,6 +147,75 @@ public class EditProfileFragment extends Fragment {
         });
         return root;
     }
+    private String getTokenFromFile() {
+        JSONObject accountData = fileManager.readFromFile("accountdata.json");
+        try {
+            if (accountData != null && accountData.has("accessToken")) {
+                return accountData.getString("accessToken");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    private String getFileExtension(String filename) {
+        int index = filename.lastIndexOf('.');
+        if (index > 0) {
+            return filename.substring(index + 1);
+        }
+        return "";
+    }
+    private void sendPhotoToServer(File file) {
+        String token = getTokenFromFile();
+        // Example code using OkHttp library
+        OkHttpClient client = new OkHttpClient();
+        MediaType MEDIA_TYPE_JPEG = MediaType.parse("image/jpeg");
+        MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
+
+        // Determine the media type based on the file extension
+        String extension = getFileExtension(file.getName());
+        MediaType mediaType;
+        if ("jpeg".equalsIgnoreCase(extension) || "jpg".equalsIgnoreCase(extension)) {
+            mediaType = MEDIA_TYPE_JPEG;
+        } else if ("png".equalsIgnoreCase(extension)) {
+            mediaType = MEDIA_TYPE_PNG;
+        } else {
+            // Unsupported file type
+            return;
+        }
+
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("file", file.getName(), RequestBody.create(MEDIA_TYPE_JPEG, file))
+                .build();
+
+        Request request = new Request.Builder()
+                .url(MainActivity.baseUrl+"/api/auth/avatar")
+                .addHeader("Authorization", "Bearer " + token)
+                .post(requestBody)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+                // Handle failure to send the photo to the server
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    // Handle successful response from the server after sending the photo
+                    String responseData = response.body().string();
+                    Log.d("response",responseData);
+                } else {
+                    String responseData = response.body().string();
+                    Log.d("response",responseData);
+                }
+            }
+        });
+    }
+
     private void openImagePicker() {
 
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -183,6 +272,7 @@ public class EditProfileFragment extends Fragment {
             directory.mkdir();
         }
         File file = new File(directory, "avatar.jpg");
+        sendPhotoToServer(file);
         try {
             FileOutputStream outputStream = new FileOutputStream(file);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
@@ -228,15 +318,56 @@ public class EditProfileFragment extends Fragment {
     }
     private void saveAccountData(String username, String email) {
         JSONObject accountData = fileManager.readFromFile("accountdata.json");
+
         try {
             accountData.put("username", username);
             accountData.put("email", email);
             fileManager.writeToFile("accountdata.json", accountData);
+
+            // Make the API call to update the user's profile
+            String token = getTokenFromFile();
+            OkHttpClient client = new OkHttpClient();
+            MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+
+            JSONObject requestBodyJson = new JSONObject();
+            requestBodyJson.put("username", username);
+            requestBodyJson.put("email", email);
+
+            RequestBody requestBody = RequestBody.create(JSON, requestBodyJson.toString());
+
+            Request request = new Request.Builder()
+                    .url(MainActivity.baseUrl + "/api/auth/update")
+                    .addHeader("Authorization", "Bearer " + token)
+                    .put(requestBody)
+                    .build();
+
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    e.printStackTrace();
+                    // Handle failure to update profile
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        // Handle successful response from the server after updating profile
+                        String responseData = response.body().string();
+                        Log.d("response", responseData);
+                    } else {
+                        // Handle unsuccessful response
+                        String responseData = response.body().string();
+                        Log.d("response", responseData);
+                    }
+                }
+            });
+
         } catch (JSONException e) {
             e.printStackTrace();
             Toast.makeText(requireContext(), "Failed to save account data", Toast.LENGTH_SHORT).show();
         }
     }
+
 
     // Method to check if account data exists in the file
     private boolean checkAccountData() {
