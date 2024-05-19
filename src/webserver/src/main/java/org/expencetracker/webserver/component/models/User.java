@@ -25,6 +25,9 @@ public class User {
     @Size(max = 120)
     private String password;
 
+    @Size(max = 120)
+    private String avatar = "";
+
     public User() {
     }
 
@@ -64,6 +67,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
 }

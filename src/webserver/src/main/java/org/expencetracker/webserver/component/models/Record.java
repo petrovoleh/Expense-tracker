@@ -7,8 +7,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
-@Document(collection = "transactions")
-public class Transaction {
+@Document(collection = "records")
+public class Record {
     @Id
     private String id;
 
@@ -27,11 +27,11 @@ public class Transaction {
     @NotNull
     private LocalDateTime timestamp;
 
-    public Transaction() {
+    public Record() {
         this.timestamp = LocalDateTime.now();
     }
 
-    public Transaction(String category, Double value, String place) {
+    public Record(String category, Double value, String place) {
         this.category = category;
         this.value = value;
         this.place = place;

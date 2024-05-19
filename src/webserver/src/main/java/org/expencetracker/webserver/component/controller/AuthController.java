@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import io.micrometer.common.util.StringUtils;
@@ -211,6 +212,9 @@ public class AuthController {
 		}
 
 		try {
+			// Generate a random filename using UUID
+			String randomFileName = UUID.randomUUID().toString() + getFileExtension(file.getOriginalFilename());
+
 			// Specify the directory where you want to save the file
 			String directoryPath = "./public/images/";
 			File directory = new File(directoryPath);
@@ -220,7 +224,7 @@ public class AuthController {
 
 			// Save the file to the specified directory
 			byte[] bytes = file.getBytes();
-			String filePath = directoryPath + file.getOriginalFilename();
+			String filePath = directoryPath + randomFileName;
 			FileOutputStream fos = new FileOutputStream(new File(filePath));
 			fos.write(bytes);
 			fos.close();
@@ -231,5 +235,15 @@ public class AuthController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload file");
 		}
 	}
+
+	// Method to get the file extension
+	private String getFileExtension(String fileName) {
+		int dotIndex = fileName.lastIndexOf('.');
+		if (dotIndex != -1 && dotIndex < fileName.length() - 1) {
+			return fileName.substring(dotIndex);
+		}
+		return ""; // No extension found
+	}
+
 
 }
