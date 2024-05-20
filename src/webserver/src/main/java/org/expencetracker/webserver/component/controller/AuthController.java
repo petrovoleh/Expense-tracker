@@ -207,13 +207,21 @@ public class AuthController {
 		if (user == null) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
 		}
+		// Check if the file size exceeds 10 MB (10 * 1024 * 1024 bytes)
+		if (file.getSize() > 10 * 1024 * 1024) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("File size exceeds the maximum limit of 10 MB");
+		}
 		if (file.isEmpty()) {
-			return ResponseEntity.badRequest().body("Please select a file to upload");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please select a file to upload");
 		}
 
 		try {
 			// Generate a random filename using UUID
-			String randomFileName = UUID.randomUUID().toString() + getFileExtension(file.getOriginalFilename());
+			String extension = getFileExtension(file.getOriginalFilename());
+			if(extension.isEmpty()){
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Incorrect file extension");
+			}
+			String randomFileName = UUID.randomUUID().toString() + extension;
 
 			// Specify the directory where you want to save the file
 			String directoryPath = "./public/images/";
@@ -240,7 +248,9 @@ public class AuthController {
 	private String getFileExtension(String fileName) {
 		int dotIndex = fileName.lastIndexOf('.');
 		if (dotIndex != -1 && dotIndex < fileName.length() - 1) {
-			return fileName.substring(dotIndex);
+			if (fileName.endsWith(".jpeg")||fileName.endsWith(".jpg")|| fileName.endsWith(".png")){
+				return fileName.substring(dotIndex);
+			}
 		}
 		return ""; // No extension found
 	}

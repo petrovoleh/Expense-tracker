@@ -62,7 +62,7 @@ public class RecordController {
         if (transactionOptional.isPresent()) {
             Record transaction = transactionOptional.get();
             transaction.setCategory(transactionDetails.getCategory());
-            transaction.setPlace(transactionDetails.getPlace());
+            transaction.setDescription(transactionDetails.getDescription());
             transaction.setValue(transactionDetails.getValue());
             transaction.setUserId(transactionDetails.getUserId());
             Record updatedTransaction = recordRepository.save(transaction);

@@ -22,20 +22,20 @@ public class Record {
     private Double value;
 
     @NotBlank
-    private String place;
+    private String description;
 
     @NotNull
-    private LocalDateTime timestamp;
+    private LocalDateTime date;
 
     public Record() {
-        this.timestamp = LocalDateTime.now();
+        this.date = LocalDateTime.now();
     }
 
-    public Record(String category, Double value, String place) {
+    public Record(String category, Double value, String description) {
         this.category = category;
         this.value = value;
-        this.place = place;
-        this.timestamp = LocalDateTime.now();
+        this.description = description;
+        this.date = LocalDateTime.now();
     }
 
     public String getId() {
@@ -69,19 +69,19 @@ public class Record {
         this.value = value;
     }
 
-    public String getPlace() {
-        return place;
+    public String getDescription() {
+        return description;
     }
 
-    public void setPlace(String place) {
-        this.place = place;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public LocalDateTime getTimestamp() {
-        return timestamp;
+    public LocalDateTime getDate() {
+        return date;
     }
 
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
+    public void setDate(LocalDateTime date) {
+        this.date = date;
     }
 }
