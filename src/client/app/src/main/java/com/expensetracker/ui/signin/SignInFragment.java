@@ -2,6 +2,8 @@ package com.expensetracker.ui.signin;
 
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,10 +25,15 @@ import com.expensetracker.validators.Validator;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.widget.Toast;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -150,20 +157,65 @@ public class SignInFragment extends Fragment {
                             json.put("email", jsonResponse.getString("email"));
                             json.put("accessToken", jsonResponse.getString("accessToken"));
                             json.put("tokenType", jsonResponse.getString("tokenType"));
+                            json.put("avatar", jsonResponse.getString("avatar"));
 
                             // Write JSON data to file
                             fileManager.writeToFile("accountdata.json", json);
-                            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
 
-                            // Навигация к навигационному пункту signup
-                            navController.navigate(R.id.navigation_profile);
+                            // Download and save the avatar image
+                            String avatarUrl = MainActivity.baseUrl + "/public/images/" + jsonResponse.getString("avatar");
+                            downloadAndSaveAvatar(avatarUrl, jsonResponse.getString("accessToken"));
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
                 });
             }
+
         });
+    }
+    private void downloadAndSaveAvatar(String avatarUrl, String accessToken) {
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url(avatarUrl)
+                .addHeader("Authorization", "Bearer " + accessToken)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    InputStream inputStream = response.body().byteStream();
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                    saveImageToStorage(bitmap);
+                }
+            }
+        });
+    }
+    private void saveImageToStorage(Bitmap bitmap) {
+        File directory = new File(requireContext().getFilesDir(), "avatars");
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
+        File file = new File(directory, "avatar.jpg");
+
+        try {
+            FileOutputStream outputStream = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+            outputStream.flush();
+            outputStream.close();
+            Toast.makeText(requireContext(), "Avatar saved", Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(requireContext(), "Failed to save avatar", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

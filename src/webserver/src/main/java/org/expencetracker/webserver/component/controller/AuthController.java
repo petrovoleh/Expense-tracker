@@ -154,26 +154,7 @@ public class AuthController {
 				userDetails.getEmail()));
 	}
 
-	@DeleteMapping("/delete")
-	public ResponseEntity<?> deleteAccount() {
-		// Retrieve the username of the authenticated user
-		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
-		// Find the user by username
-		User user = userRepository.findByUsername(username).orElse(null);
-
-		if (user == null) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
-		}
-
-		// Perform any additional cleanup or validation before deleting the account
-		// For example, you might want to check if the user has any associated data to delete
-
-		// Delete the user account
-		userRepository.delete(user);
-
-		return ResponseEntity.ok("Account deleted successfully");
-	}
 	@PutMapping("/update")
 	public ResponseEntity<?> updateProfile(@Valid @RequestBody UpdateProfileRequest updateRequest) {
 		// Retrieve the authenticated user
@@ -197,63 +178,7 @@ public class AuthController {
 		return ResponseEntity.ok("Profile updated successfully");
 	}
 
-	@PostMapping("/avatar")
-	public ResponseEntity<String> uploadAvatar(@RequestParam("file") MultipartFile file) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String username = authentication.getName();
-		// Find the user by username
-		User user = userRepository.findByUsername(username).orElse(null);
 
-		if (user == null) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
-		}
-		// Check if the file size exceeds 10 MB (10 * 1024 * 1024 bytes)
-		if (file.getSize() > 10 * 1024 * 1024) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("File size exceeds the maximum limit of 10 MB");
-		}
-		if (file.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please select a file to upload");
-		}
-
-		try {
-			// Generate a random filename using UUID
-			String extension = getFileExtension(file.getOriginalFilename());
-			if(extension.isEmpty()){
-				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Incorrect file extension");
-			}
-			String randomFileName = UUID.randomUUID().toString() + extension;
-
-			// Specify the directory where you want to save the file
-			String directoryPath = "./public/images/";
-			File directory = new File(directoryPath);
-			if (!directory.exists()) {
-				directory.mkdirs();
-			}
-
-			// Save the file to the specified directory
-			byte[] bytes = file.getBytes();
-			String filePath = directoryPath + randomFileName;
-			FileOutputStream fos = new FileOutputStream(new File(filePath));
-			fos.write(bytes);
-			fos.close();
-
-			return ResponseEntity.ok("File uploaded successfully");
-		} catch (IOException e) {
-			e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload file");
-		}
-	}
-
-	// Method to get the file extension
-	private String getFileExtension(String fileName) {
-		int dotIndex = fileName.lastIndexOf('.');
-		if (dotIndex != -1 && dotIndex < fileName.length() - 1) {
-			if (fileName.endsWith(".jpeg")||fileName.endsWith(".jpg")|| fileName.endsWith(".png")){
-				return fileName.substring(dotIndex);
-			}
-		}
-		return ""; // No extension found
-	}
 
 
 }

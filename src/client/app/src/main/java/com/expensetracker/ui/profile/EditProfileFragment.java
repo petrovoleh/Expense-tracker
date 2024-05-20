@@ -3,6 +3,7 @@ package com.expensetracker.ui.profile;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,13 +14,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.content.DialogInterface;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -31,12 +27,10 @@ import androidx.navigation.Navigation;
 
 import com.expensetracker.MainActivity;
 import com.expensetracker.R;
-import com.expensetracker.data.Currencies;
 import com.expensetracker.data.FileManager;
 import com.expensetracker.databinding.FragmentEditProfileBinding;
 import com.expensetracker.validators.Validator;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -61,6 +55,7 @@ public class EditProfileFragment extends Fragment {
     private ImageView imageView;
     private FileManager fileManager;
     private static final int PICK_IMAGE_REQUEST = 1;
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -70,83 +65,69 @@ public class EditProfileFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        ProfileViewModel homeViewModel =
+        ProfileViewModel profileViewModel =
                 new ViewModelProvider(this).get(ProfileViewModel.class);
 
         binding = FragmentEditProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        imageView = root.findViewById(R.id.imageView);
         File avatarFile = new File(requireContext().getFilesDir(), "avatars/avatar.jpg");
         if (avatarFile.exists()) {
-            // If the file exists, load the image into ImageView
             Bitmap bitmap = BitmapFactory.decodeFile(avatarFile.getAbsolutePath());
-            imageView = root.findViewById(R.id.imageView);
             imageView.setImageBitmap(bitmap);
         }
-        // Check if account data exists in the file
+
         if (!checkAccountData()) {
-            // If data doesn't exist, navigate the user to the sign-in page
-            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
-            navController.navigate(R.id.navigation_signin);
-            BottomNavigationView bottomNavigationView = requireActivity().findViewById(R.id.nav_view);
-            bottomNavigationView.setSelectedItemId(R.id.navigation_profile);
+            navigateToSignIn();
         } else {
-            // If account data exists, load username and email
-            try {
-                JSONObject accountData = fileManager.readFromFile("accountdata.json");
-                if (accountData != null) {
-                    String username = accountData.getString("username");
-                    String email = accountData.getString("email");
-                    // Set username and email to TextViews
-                    binding.editTextName.setText(username);
-                    binding.editTextEmail.setText(email);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            loadAccountData();
         }
-        Button deleteButton = root.findViewById(R.id.deleteButton);
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDeleteConfirmationDialog();
-            }
-        });
-        Button changeAvatarButton = root.findViewById(R.id.editButton);
-        changeAvatarButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openImagePicker();
-            }
-        });
-        Button saveButton = root.findViewById(R.id.saveButton);
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String username = binding.editTextName.getText().toString().trim();
-                String email = binding.editTextEmail.getText().toString().trim();
-                if(Validator.validateName(getContext(), username, binding.editTextName)
-                        || Validator.validateEmail(getContext(), email, binding.editTextEmail)
-                    ){
-                        saveAccountData(username, email);
-                        Toast.makeText(requireContext(), "Account data saved", Toast.LENGTH_SHORT).show();
 
-                    }else{
-                    Toast.makeText(requireContext(), "Account data was not saved", Toast.LENGTH_SHORT).show();
+        setupButtonListeners(root);
 
-                }
-                }
-        });
-
-        Button backButton = root.findViewById(R.id.back);
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
-                navController.navigate(R.id.navigation_profile);
-            }
-        });
         return root;
     }
+
+    private void setupButtonListeners(View root) {
+        Button deleteButton = root.findViewById(R.id.deleteButton);
+        deleteButton.setOnClickListener(v -> showDeleteConfirmationDialog());
+
+        Button changeAvatarButton = root.findViewById(R.id.editButton);
+        changeAvatarButton.setOnClickListener(v -> openImagePicker());
+
+        Button saveButton = root.findViewById(R.id.saveButton);
+        saveButton.setOnClickListener(v -> saveProfile());
+
+        Button backButton = root.findViewById(R.id.back);
+        backButton.setOnClickListener(v -> navigateToProfile());
+    }
+
+    private void navigateToSignIn() {
+        NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+        navController.navigate(R.id.navigation_signin);
+        BottomNavigationView bottomNavigationView = requireActivity().findViewById(R.id.nav_view);
+        bottomNavigationView.setSelectedItemId(R.id.navigation_profile);
+    }
+
+    private void navigateToProfile() {
+        NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+        navController.navigate(R.id.navigation_profile);
+    }
+
+    private void saveProfile() {
+        String username = binding.editTextName.getText().toString().trim();
+        String email = binding.editTextEmail.getText().toString().trim();
+
+        if (Validator.validateName(getContext(), username, binding.editTextName)
+                && Validator.validateEmail(getContext(), email, binding.editTextEmail)) {
+            saveAccountData(username, email);
+            Toast.makeText(requireContext(), "Account data saved", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(requireContext(), "Account data was not saved", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private String getTokenFromFile() {
         JSONObject accountData = fileManager.readFromFile("accountdata.json");
         try {
@@ -158,6 +139,7 @@ public class EditProfileFragment extends Fragment {
         }
         return null;
     }
+
     private String getFileExtension(String filename) {
         int index = filename.lastIndexOf('.');
         if (index > 0) {
@@ -165,32 +147,19 @@ public class EditProfileFragment extends Fragment {
         }
         return "";
     }
+
     private void sendPhotoToServer(File file) {
         String token = getTokenFromFile();
-        // Example code using OkHttp library
         OkHttpClient client = new OkHttpClient();
-        MediaType MEDIA_TYPE_JPEG = MediaType.parse("image/jpeg");
-        MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
-
-        // Determine the media type based on the file extension
-        String extension = getFileExtension(file.getName());
-        MediaType mediaType;
-        if ("jpeg".equalsIgnoreCase(extension) || "jpg".equalsIgnoreCase(extension)) {
-            mediaType = MEDIA_TYPE_JPEG;
-        } else if ("png".equalsIgnoreCase(extension)) {
-            mediaType = MEDIA_TYPE_PNG;
-        } else {
-            // Unsupported file type
-            return;
-        }
+        MediaType mediaType = MediaType.parse("image/" + getFileExtension(file.getName()));
 
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("file", file.getName(), RequestBody.create(MEDIA_TYPE_JPEG, file))
+                .addFormDataPart("file", file.getName(), RequestBody.create(mediaType, file))
                 .build();
 
         Request request = new Request.Builder()
-                .url(MainActivity.baseUrl+"/api/auth/avatar")
+                .url(MainActivity.baseUrl + "/api/profile/avatar")
                 .addHeader("Authorization", "Bearer " + token)
                 .post(requestBody)
                 .build();
@@ -199,65 +168,49 @@ public class EditProfileFragment extends Fragment {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
-                // Handle failure to send the photo to the server
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
-                    // Handle successful response from the server after sending the photo
-                    String responseData = response.body().string();
-                    Log.d("response",responseData);
+                    Log.d("response", response.body().string());
                 } else {
-                    String responseData = response.body().string();
-                    Log.d("response",responseData);
+                    Log.d("response", response.body().string());
                 }
             }
         });
     }
 
     private void openImagePicker() {
-
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, PICK_IMAGE_REQUEST);
     }
+
     private void showDeleteConfirmationDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("Confirm Deletion");
         builder.setMessage("Are you sure you want to delete the avatar?");
-        builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // User confirmed deletion, delete the avatar
-                deleteAvatar();
-            }
-        });
+        builder.setPositiveButton("Delete", (dialog, which) -> deleteAvatar());
         builder.setNegativeButton("Cancel", null);
-        AlertDialog dialog = builder.create();
-        dialog.show();
+        builder.create().show();
     }
+
     private void deleteAvatar() {
-        // Delete the avatar file
         File avatarFile = new File(requireContext().getFilesDir(), "avatars/avatar.jpg");
         if (avatarFile.exists()) {
             avatarFile.delete();
         }
-
-        // Update the ImageView to display a placeholder image
         imageView.setImageResource(R.drawable.account);
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
             Uri uri = data.getData();
             try {
-                // Load the selected image into ImageView
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), uri);
-                ImageView imageView = requireView().findViewById(R.id.imageView);
                 imageView.setImageBitmap(bitmap);
-
-                // Save the selected image to local storage
                 saveImageToStorage(bitmap);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -272,43 +225,30 @@ public class EditProfileFragment extends Fragment {
             directory.mkdir();
         }
         File file = new File(directory, "avatar.jpg");
-        sendPhotoToServer(file);
+
         try {
             FileOutputStream outputStream = new FileOutputStream(file);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
             outputStream.flush();
             outputStream.close();
+            sendPhotoToServer(file);
             Toast.makeText(requireContext(), "Avatar saved", Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             e.printStackTrace();
             Toast.makeText(requireContext(), "Failed to save avatar", Toast.LENGTH_SHORT).show();
         }
     }
+
     @Override
     public void onResume() {
+        super.onResume();
         BottomNavigationView bottomNavigationView = requireActivity().findViewById(R.id.nav_view);
         bottomNavigationView.setSelectedItemId(R.id.navigation_profile);
-        super.onResume();
         if (!checkAccountData()) {
-            // If data doesn't exist, navigate the user to the sign-in page
-            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
-            navController.navigate(R.id.navigation_signin);
+            navigateToSignIn();
         } else {
-            // If account data exists, load username and email
-            try {
-                JSONObject accountData = fileManager.readFromFile("accountdata.json");
-                if (accountData != null) {
-                    String username = accountData.getString("username");
-                    String email = accountData.getString("email");
-                    // Set username and email to TextViews
-                    binding.editTextName.setText(username);
-                    binding.editTextEmail.setText(email);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            loadAccountData();
         }
-
     }
 
     @Override
@@ -316,6 +256,7 @@ public class EditProfileFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
+
     private void saveAccountData(String username, String email) {
         JSONObject accountData = fileManager.readFromFile("accountdata.json");
 
@@ -324,43 +265,7 @@ public class EditProfileFragment extends Fragment {
             accountData.put("email", email);
             fileManager.writeToFile("accountdata.json", accountData);
 
-            // Make the API call to update the user's profile
-            String token = getTokenFromFile();
-            OkHttpClient client = new OkHttpClient();
-            MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-
-            JSONObject requestBodyJson = new JSONObject();
-            requestBodyJson.put("username", username);
-            requestBodyJson.put("email", email);
-
-            RequestBody requestBody = RequestBody.create(JSON, requestBodyJson.toString());
-
-            Request request = new Request.Builder()
-                    .url(MainActivity.baseUrl + "/api/auth/update")
-                    .addHeader("Authorization", "Bearer " + token)
-                    .put(requestBody)
-                    .build();
-
-            client.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    e.printStackTrace();
-                    // Handle failure to update profile
-                }
-
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    if (response.isSuccessful()) {
-                        // Handle successful response from the server after updating profile
-                        String responseData = response.body().string();
-                        Log.d("response", responseData);
-                    } else {
-                        // Handle unsuccessful response
-                        String responseData = response.body().string();
-                        Log.d("response", responseData);
-                    }
-                }
-            });
+            updateProfileOnServer(username, email);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -368,14 +273,67 @@ public class EditProfileFragment extends Fragment {
         }
     }
 
+    private void updateProfileOnServer(String username, String email) {
+        String token = getTokenFromFile();
+        OkHttpClient client = new OkHttpClient();
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
-    // Method to check if account data exists in the file
-    private boolean checkAccountData() {
+        JSONObject jsonObject = new JSONObject();
         try {
-            JSONObject accountData = fileManager.readFromFile("accountdata.json");
-            return accountData != null && accountData.has("username") && !accountData.getString("username").isEmpty();
+            jsonObject.put("username", username);
+            jsonObject.put("email", email);
         } catch (JSONException e) {
-            fileManager.writeToFile("accountdata.json", new JSONObject());
+            e.printStackTrace();
+        }
+
+        RequestBody requestBody = RequestBody.create(JSON, jsonObject.toString());
+
+        Request request = new Request.Builder()
+                .url(MainActivity.baseUrl + "/api/profile")
+                .addHeader("Authorization", "Bearer " + token)
+                .put(requestBody)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+                Toast.makeText(requireContext(), "Failed to update profile", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    Log.d("response", response.body().string());
+                } else {
+                    Log.d("response", response.body().string());
+                }
+            }
+        });
+    }
+
+    private void loadAccountData() {
+        JSONObject accountData = fileManager.readFromFile("accountdata.json");
+
+        try {
+            String username = accountData.getString("username");
+            String email = accountData.getString("email");
+
+            binding.editTextName.setText(username);
+            binding.editTextEmail.setText(email);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean checkAccountData() {
+        JSONObject accountData = fileManager.readFromFile("accountdata.json");
+        try {
+            if (accountData != null && accountData.has("accessToken")) {
+                String accessToken = accountData.getString("accessToken");
+                return accessToken != null && !accessToken.isEmpty();
+            }
+        } catch (JSONException e) {
             e.printStackTrace();
         }
         return false;
