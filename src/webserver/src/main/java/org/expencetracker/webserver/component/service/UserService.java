@@ -11,7 +11,7 @@ import java.util.Optional;
 @Service
 public class UserService {
 
-    private List<User> userList;
+    private final List<User> userList;
 
     public UserService() {
         userList = new ArrayList<>();

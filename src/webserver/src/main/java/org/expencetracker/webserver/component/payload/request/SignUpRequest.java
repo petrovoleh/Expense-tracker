@@ -4,7 +4,13 @@ import java.util.Set;
 
 import jakarta.validation.constraints.*;
  
-public class SignupRequest {
+public class SignUpRequest {
+
+    public SignUpRequest(String username,String email, String password) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+    }
     @NotBlank
     @Size(min = 3, max = 20)
     private String username;

@@ -2,6 +2,7 @@ package org.expencetracker.webserver.component.controller;
 
 import jakarta.validation.Valid;
 import org.expencetracker.webserver.component.models.User;
+import org.expencetracker.webserver.component.payload.request.UpdateProfileRequest;
 import org.expencetracker.webserver.component.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -83,7 +84,7 @@ public class ProfileController {
             if (extension.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Incorrect file extension");
             }
-            String randomFileName = UUID.randomUUID().toString() + extension;
+            String randomFileName = UUID.randomUUID() + extension;
 
             // Specify the directory where you want to save the file
             String directoryPath = "./public/images/";
@@ -109,7 +110,28 @@ public class ProfileController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload file");
         }
     }
+    @PutMapping("/update")
+    public ResponseEntity<?> updateProfile(@Valid @RequestBody UpdateProfileRequest updateRequest) {
+        // Retrieve the authenticated user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
 
+        // Find the user by username
+        User user = userRepository.findByUsername(username).orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
+        }
+
+        // Update the user's name and email
+        user.setUsername(updateRequest.getName());
+        user.setEmail(updateRequest.getEmail());
+
+        // Save the updated user
+        userRepository.save(user);
+
+        return ResponseEntity.ok("Profile updated successfully");
+    }
 
     // Method to get the file extension
     private String getFileExtension(String fileName) {

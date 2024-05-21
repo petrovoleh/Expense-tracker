@@ -1,19 +1,18 @@
 package org.expencetracker.webserver.component.controller;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 import io.micrometer.common.util.StringUtils;
 import jakarta.validation.Valid;
-
+import org.expencetracker.webserver.component.models.User;
 import org.expencetracker.webserver.component.payload.request.ChangePasswordRequest;
-import org.expencetracker.webserver.component.payload.request.UpdateProfileRequest;
+import org.expencetracker.webserver.component.payload.request.LoginRequest;
+import org.expencetracker.webserver.component.payload.request.SignUpRequest;
+import org.expencetracker.webserver.component.payload.response.JwtResponse;
+import org.expencetracker.webserver.component.payload.response.MessageResponse;
+import org.expencetracker.webserver.component.repository.UserRepository;
+import org.expencetracker.webserver.component.security.jwt.JwtUtils;
+import org.expencetracker.webserver.component.security.services.UserDetailsImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,160 +24,127 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import org.expencetracker.webserver.component.models.User;
-import org.expencetracker.webserver.component.payload.request.LoginRequest;
-import org.expencetracker.webserver.component.payload.request.SignupRequest;
-import org.expencetracker.webserver.component.payload.response.JwtResponse;
-import org.expencetracker.webserver.component.payload.response.MessageResponse;
-import org.expencetracker.webserver.component.repository.UserRepository;
-import org.expencetracker.webserver.component.security.jwt.JwtUtils;
-import org.expencetracker.webserver.component.security.services.UserDetailsImpl;
-import org.springframework.web.multipart.MultipartFile;
-
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-	@Autowired
-	AuthenticationManager authenticationManager;
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
-	@Autowired
-	UserRepository userRepository;
+    @Autowired
+    AuthenticationManager authenticationManager;
 
-	@Autowired
-	PasswordEncoder encoder;
+    @Autowired
+    UserRepository userRepository;
 
-	@Autowired
-	JwtUtils jwtUtils;
+    @Autowired
+    PasswordEncoder encoder;
 
-	@PostMapping("/signin")
-	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-		try {
-			Authentication authentication = authenticationManager.authenticate(
-					new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+    @Autowired
+    JwtUtils jwtUtils;
 
-			SecurityContextHolder.getContext().setAuthentication(authentication);
-			String jwt = jwtUtils.generateJwtToken(authentication);
+    @PostMapping("/signin")
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
-			UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-			return ResponseEntity.ok(new JwtResponse(jwt,
-					userDetails.getId(),
-					userDetails.getUsername(),
-					userDetails.getEmail()));
-		} catch (AuthenticationException e) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error");
-		}
-	}
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = jwtUtils.generateJwtToken(authentication);
 
-	@GetMapping("/check-auth")
-	public ResponseEntity<String> checkAuthentication() {
-		// Retrieve the username of the authenticated user
-		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            return ResponseEntity.ok(new JwtResponse(jwt,
+                    userDetails.getId(),
+                    userDetails.getUsername(),
+                    userDetails.getEmail()));
+        } catch (AuthenticationException e) {
+            logger.error("AuthenticationException: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+        } catch (Exception e) {
+            logger.error("Internal server error: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error");
+        }
+    }
 
-		// You can perform additional checks or return any information about the authenticated user
-		return ResponseEntity.ok("Authenticated User: " + username);
-	}
+    @GetMapping("/check-auth")
+    public ResponseEntity<String> checkAuthentication() {
+        // Retrieve the username of the authenticated user
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
-	@PostMapping("/changepassword")
-	public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
-		// Retrieve the username of the authenticated user
-		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        // You can perform additional checks or return any information about the authenticated user
+        return ResponseEntity.ok("Authenticated User: " + username);
+    }
 
-		// Find the user by username
-		User user = userRepository.findByUsername(username).orElse(null);
+    @PostMapping("/changepassword")
+    public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
+        // Retrieve the username of the authenticated user
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
-		if (user == null) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
-		}
+        // Find the user by username
+        User user = userRepository.findByUsername(username).orElse(null);
 
-		// Check if the old password matches
-		if (!encoder.matches(changePasswordRequest.getOldPassword(), user.getPassword())) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid old password");
-		}
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
+        }
 
-		// Update the password
-		user.setPassword(encoder.encode(changePasswordRequest.getNewPassword()));
-		userRepository.save(user);
+        // Check if the old password matches
+        if (!encoder.matches(changePasswordRequest.getOldPassword(), user.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid old password");
+        }
 
-		return ResponseEntity.ok("Password changed successfully");
-	}
+        // Update the password
+        user.setPassword(encoder.encode(changePasswordRequest.getNewPassword()));
+        userRepository.save(user);
 
-	@PostMapping("/signup")
-	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-		// Check if username is empty or exceeds max size
-		if (StringUtils.isBlank(signUpRequest.getUsername()) || signUpRequest.getUsername().length() > 254) {
-			return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is empty or too long!"));
-		}
+        return ResponseEntity.ok("Password changed successfully");
+    }
 
-		// Check if email is empty or exceeds max size
-		if (StringUtils.isBlank(signUpRequest.getEmail()) || signUpRequest.getEmail().length() > 254) {
-			return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is empty or too long!"));
-		}
+    @PostMapping("/signup")
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
+        // Check if username is empty or exceeds max size
+        if (StringUtils.isBlank(signUpRequest.getUsername()) || signUpRequest.getUsername().length() > 254) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is empty or too long!"));
+        }
 
-		// Check if password is empty or exceeds max size
-		if (StringUtils.isBlank(signUpRequest.getPassword()) || signUpRequest.getPassword().length() > 254) {
-			return ResponseEntity.badRequest().body(new MessageResponse("Error: Password is empty or too long!"));
-		}
+        // Check if email is empty or exceeds max size
+        if (StringUtils.isBlank(signUpRequest.getEmail()) || signUpRequest.getEmail().length() > 254) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is empty or too long!"));
+        }
 
-		if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-			return ResponseEntity
-					.badRequest()
-					.body(new MessageResponse("Error: Username is already taken!"));
-		}
+        // Check if password is empty or exceeds max size
+        if (StringUtils.isBlank(signUpRequest.getPassword()) || signUpRequest.getPassword().length() > 254) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Password is empty or too long!"));
+        }
 
-		if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-			return ResponseEntity
-					.badRequest()
-					.body(new MessageResponse("Error: Email is already in use!"));
-		}
+        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Error: Username is already taken!"));
+        }
 
-		// Create new user's account
-		User user = new User(signUpRequest.getUsername(),
-				signUpRequest.getEmail(),
-				encoder.encode(signUpRequest.getPassword()));
+        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Error: Email is already in use!"));
+        }
 
-		userRepository.save(user);
-		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(signUpRequest.getUsername(), signUpRequest.getPassword()));
+        // Create new user's account
+        User user = new User(signUpRequest.getUsername(),
+                signUpRequest.getEmail(),
+                encoder.encode(signUpRequest.getPassword()));
 
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-		String jwt = jwtUtils.generateJwtToken(authentication);
+        userRepository.save(user);
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(signUpRequest.getUsername(), signUpRequest.getPassword()));
 
-		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtUtils.generateJwtToken(authentication);
 
-		return ResponseEntity.ok(new JwtResponse(jwt,
-				userDetails.getId(),
-				userDetails.getUsername(),
-				userDetails.getEmail()));
-	}
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-
-	@PutMapping("/update")
-	public ResponseEntity<?> updateProfile(@Valid @RequestBody UpdateProfileRequest updateRequest) {
-		// Retrieve the authenticated user
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String username = authentication.getName();
-
-		// Find the user by username
-		User user = userRepository.findByUsername(username).orElse(null);
-
-		if (user == null) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
-		}
-
-		// Update the user's name and email
-		user.setUsername(updateRequest.getName());
-		user.setEmail(updateRequest.getEmail());
-
-		// Save the updated user
-		userRepository.save(user);
-
-		return ResponseEntity.ok("Profile updated successfully");
-	}
-
-
-
+        return ResponseEntity.ok(new JwtResponse(jwt,
+                userDetails.getId(),
+                userDetails.getUsername(),
+                userDetails.getEmail()));
+    }
 
 }

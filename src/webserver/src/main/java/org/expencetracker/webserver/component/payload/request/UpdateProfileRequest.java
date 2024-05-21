@@ -6,6 +6,11 @@ import jakarta.validation.constraints.Size;
 
 public class UpdateProfileRequest {
 
+
+	public UpdateProfileRequest(String name, String email){
+		this.name=name;
+		this.email=email;
+	}
 	@NotBlank(message = "Name cannot be blank")
 	@Size(max = 255, message = "Name must be less than 255 characters")
 	private String name;
