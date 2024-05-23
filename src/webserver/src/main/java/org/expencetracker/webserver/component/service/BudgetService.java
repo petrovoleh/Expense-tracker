@@ -17,19 +17,30 @@ import java.util.Optional;
 public class BudgetService {
 
     private final BudgetRepository budgetRepository;
-
     private final UserRepository userRepository;
 
+    @Autowired
     public BudgetService(BudgetRepository budgetRepository, UserRepository userRepository) {
         this.budgetRepository = budgetRepository;
         this.userRepository = userRepository;
     }
 
+    /**
+     * Retrieves the authenticated user from the security context.
+     *
+     * @return the authenticated User object, or null if no user is authenticated
+     */
     public User getAuthenticatedUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByUsername(username).orElse(null);
     }
 
+    /**
+     * Adds a new budget for the authenticated user.
+     *
+     * @param budget the budget to be added
+     * @return a ResponseEntity containing the saved budget
+     */
     public ResponseEntity<?> addBudget(Budget budget) {
         User user = getAuthenticatedUser();
         if (user == null) {
@@ -41,6 +52,11 @@ public class BudgetService {
         return ResponseEntity.ok(savedBudget);
     }
 
+    /**
+     * Retrieves all budgets for the authenticated user.
+     *
+     * @return a ResponseEntity containing the list of budgets
+     */
     public ResponseEntity<?> getBudgetsByUserId() {
         User user = getAuthenticatedUser();
         if (user == null) {
@@ -51,6 +67,13 @@ public class BudgetService {
         return ResponseEntity.ok(budgets);
     }
 
+    /**
+     * Updates an existing budget for the authenticated user.
+     *
+     * @param id the ID of the budget to be updated
+     * @param budgetDetails the new details of the budget
+     * @return a ResponseEntity containing the updated budget or an error response if not found or unauthorized
+     */
     public ResponseEntity<?> updateBudget(String id, Budget budgetDetails) {
         User user = getAuthenticatedUser();
         if (user == null) {
@@ -73,6 +96,12 @@ public class BudgetService {
         }
     }
 
+    /**
+     * Deletes a budget by its ID for the authenticated user.
+     *
+     * @param id the ID of the budget to be deleted
+     * @return a ResponseEntity indicating the result of the operation
+     */
     public ResponseEntity<?> deleteBudget(String id) {
         User user = getAuthenticatedUser();
         if (user == null) {
@@ -93,6 +122,11 @@ public class BudgetService {
         }
     }
 
+    /**
+     * Deletes all budgets for the authenticated user.
+     *
+     * @return a ResponseEntity indicating the result of the operation
+     */
     public ResponseEntity<?> deleteBudgetsByUserId() {
         User user = getAuthenticatedUser();
         if (user == null) {

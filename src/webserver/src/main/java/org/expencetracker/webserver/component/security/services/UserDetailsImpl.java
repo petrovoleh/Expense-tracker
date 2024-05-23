@@ -1,5 +1,6 @@
 package org.expencetracker.webserver.component.security.services;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -13,6 +14,7 @@ import org.expencetracker.webserver.component.models.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class UserDetailsImpl implements UserDetails {
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 	private final String id;

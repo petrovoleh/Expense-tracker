@@ -16,7 +16,6 @@ import java.util.Optional;
 public class RecordService {
 
     private final RecordRepository recordRepository;
-
     private final UserRepository userRepository;
 
     public RecordService(RecordRepository recordRepository, UserRepository userRepository) {
@@ -24,11 +23,22 @@ public class RecordService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Retrieves the authenticated user from the security context.
+     *
+     * @return the authenticated user or null if not found.
+     */
     public User getAuthenticatedUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByUsername(username).orElse(null);
     }
 
+    /**
+     * Adds a new record for the authenticated user.
+     *
+     * @param record the record to be added.
+     * @return a ResponseEntity indicating the result of the operation.
+     */
     public ResponseEntity<?> addRecord(Record record) {
         User user = getAuthenticatedUser();
         if (user == null) {
@@ -40,6 +50,11 @@ public class RecordService {
         return ResponseEntity.ok(savedRecord);
     }
 
+    /**
+     * Retrieves all records for the authenticated user.
+     *
+     * @return a ResponseEntity with the list of records.
+     */
     public ResponseEntity<?> getRecordsByUserId() {
         User user = getAuthenticatedUser();
         if (user == null) {
@@ -50,6 +65,13 @@ public class RecordService {
         return ResponseEntity.ok(records);
     }
 
+    /**
+     * Updates an existing record for the authenticated user.
+     *
+     * @param id the ID of the record to update.
+     * @param recordDetails the updated record details.
+     * @return a ResponseEntity indicating the result of the operation.
+     */
     public ResponseEntity<?> updateRecord(String id, Record recordDetails) {
         User user = getAuthenticatedUser();
         if (user == null) {
@@ -72,6 +94,12 @@ public class RecordService {
         }
     }
 
+    /**
+     * Deletes an existing record for the authenticated user.
+     *
+     * @param id the ID of the record to delete.
+     * @return a ResponseEntity indicating the result of the operation.
+     */
     public ResponseEntity<?> deleteRecord(String id) {
         User user = getAuthenticatedUser();
         if (user == null) {
