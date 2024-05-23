@@ -13,16 +13,16 @@ public class User {
     private String id;
 
     @NotBlank
-    @Size(max = 20)
+    @Size(max = 50)
     private String username;
 
     @NotBlank
-    @Size(max = 50)
+    @Size(max = 255)
     @Email
     private String email;
 
     @NotBlank
-    @Size(max = 120)
+    @Size(max = 255)
     private String password;
 
     @Size(max = 120)

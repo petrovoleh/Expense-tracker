@@ -13,14 +13,17 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public class UserService {
 
+    private final UserRepository userRepository;
+
     @Autowired
-    private UserRepository userRepository;
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public User getAuthenticatedUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -48,6 +51,12 @@ public class UserService {
         if (file.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please select a file to upload");
         }
+
+        // Check file content type and file signature
+        if (!isValidImageFile(file)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid file type. Please upload a JPEG or PNG image.");
+        }
+
 
         try {
             String extension = getFileExtension(file.getOriginalFilename());
@@ -88,6 +97,31 @@ public class UserService {
 
         userRepository.save(user);
         return ResponseEntity.ok("Profile updated successfully");
+    }
+
+
+
+    public boolean isValidImageFile(MultipartFile file) {
+        String contentType = file.getContentType();
+        if (contentType == null || (!contentType.equalsIgnoreCase("image/jpeg")
+                && !contentType.equalsIgnoreCase("image/jpg")
+                && !contentType.equalsIgnoreCase("image/png"))) {
+            return false;
+        }
+
+        try {
+            byte[] fileBytes = file.getBytes();
+            // Check the file signature for JPEG and PNG files
+            if ((fileBytes.length > 3 && fileBytes[0] == (byte) 0xFF && fileBytes[1] == (byte) 0xD8 && fileBytes[2] == (byte) 0xFF) || // JPEG, JPG
+                    (fileBytes.length > 8 && fileBytes[0] == (byte) 0x89 && fileBytes[1] == (byte) 0x50 && fileBytes[2] == (byte) 0x4E && fileBytes[3] == (byte) 0x47 && // PNG
+                            fileBytes[4] == (byte) 0x0D && fileBytes[5] == (byte) 0x0A && fileBytes[6] == (byte) 0x1A && fileBytes[7] == (byte) 0x0A)) {
+                return true;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
     private String getFileExtension(String fileName) {

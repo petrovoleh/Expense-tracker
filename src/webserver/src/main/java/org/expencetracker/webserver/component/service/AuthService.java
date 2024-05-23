@@ -87,15 +87,15 @@ public class AuthService {
     }
 
     public ResponseEntity<?> registerUser(@Valid SignUpRequest signUpRequest) {
-        if (StringUtils.isBlank(signUpRequest.getUsername()) || signUpRequest.getUsername().length() > 254) {
+        if (StringUtils.isBlank(signUpRequest.getUsername()) || signUpRequest.getUsername().length() > 50) {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is empty or too long!"));
         }
 
-        if (StringUtils.isBlank(signUpRequest.getEmail()) || signUpRequest.getEmail().length() > 254) {
+        if (StringUtils.isBlank(signUpRequest.getEmail()) || signUpRequest.getEmail().length() > 255) {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is empty or too long!"));
         }
 
-        if (StringUtils.isBlank(signUpRequest.getPassword()) || signUpRequest.getPassword().length() > 254) {
+        if (StringUtils.isBlank(signUpRequest.getPassword()) || signUpRequest.getPassword().length() > 255) {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Password is empty or too long!"));
         }
 

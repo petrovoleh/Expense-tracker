@@ -16,11 +16,14 @@ import java.util.Optional;
 @Service
 public class BudgetService {
 
-    @Autowired
-    private BudgetRepository budgetRepository;
+    private final BudgetRepository budgetRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public BudgetService(BudgetRepository budgetRepository, UserRepository userRepository) {
+        this.budgetRepository = budgetRepository;
+        this.userRepository = userRepository;
+    }
 
     public User getAuthenticatedUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();

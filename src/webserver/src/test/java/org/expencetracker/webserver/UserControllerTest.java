@@ -16,6 +16,8 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -67,7 +69,11 @@ public class UserControllerTest {
     @Test
     @WithMockUser(username = "testuser")
     public void testUploadAvatar_Success() throws Exception {
-        MockMultipartFile file = new MockMultipartFile("file", "avatar.png", MediaType.IMAGE_PNG_VALUE, "test image".getBytes());
+        byte[] fileContent = Files.readAllBytes(Paths.get("./public/images/test-avatar.jpg"));
+
+        // Create a mock file
+        MockMultipartFile file = new MockMultipartFile("file", "avatar.jpg", "image/jpg", fileContent);
+
         Mockito.when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(user));
 
         mockMvc.perform(multipart("/api/user/avatar")

@@ -4,7 +4,6 @@ import org.expencetracker.webserver.component.models.Record;
 import org.expencetracker.webserver.component.models.User;
 import org.expencetracker.webserver.component.repository.RecordRepository;
 import org.expencetracker.webserver.component.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,11 +15,14 @@ import java.util.Optional;
 @Service
 public class RecordService {
 
-    @Autowired
-    private RecordRepository recordRepository;
+    private final RecordRepository recordRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public RecordService(RecordRepository recordRepository, UserRepository userRepository) {
+        this.recordRepository = recordRepository;
+        this.userRepository = userRepository;
+    }
 
     public User getAuthenticatedUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();

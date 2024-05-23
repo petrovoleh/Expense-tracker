@@ -2,6 +2,7 @@ package org.expencetracker.webserver.component.models;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
@@ -10,9 +11,11 @@ public class Message {
     @Id
     private String id;
 
+    @Size(max = 255)
     @NotBlank
     private String userId;
 
+    @Size(max = 1000)
     @NotBlank
     private String text;
 
