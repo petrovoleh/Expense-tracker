@@ -1,150 +1,41 @@
 package org.expencetracker.webserver.component.controller;
 
-import io.micrometer.common.util.StringUtils;
 import jakarta.validation.Valid;
-import org.expencetracker.webserver.component.models.User;
 import org.expencetracker.webserver.component.payload.request.ChangePasswordRequest;
 import org.expencetracker.webserver.component.payload.request.LoginRequest;
 import org.expencetracker.webserver.component.payload.request.SignUpRequest;
-import org.expencetracker.webserver.component.payload.response.JwtResponse;
-import org.expencetracker.webserver.component.payload.response.MessageResponse;
-import org.expencetracker.webserver.component.repository.UserRepository;
-import org.expencetracker.webserver.component.security.jwt.JwtUtils;
-import org.expencetracker.webserver.component.security.services.UserDetailsImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.expencetracker.webserver.component.service.AuthService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
-    @Autowired
-    AuthenticationManager authenticationManager;
+    private final AuthService authService;
 
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    PasswordEncoder encoder;
-
-    @Autowired
-    JwtUtils jwtUtils;
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            String jwt = jwtUtils.generateJwtToken(authentication);
-
-            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-            return ResponseEntity.ok(new JwtResponse(jwt,
-                    userDetails.getId(),
-                    userDetails.getUsername(),
-                    userDetails.getEmail()));
-        } catch (AuthenticationException e) {
-            logger.error("AuthenticationException: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
-        } catch (Exception e) {
-            logger.error("Internal server error: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error");
-        }
+        return authService.authenticateUser(loginRequest);
     }
 
     @GetMapping("/check-auth")
     public ResponseEntity<String> checkAuthentication() {
-        // Retrieve the username of the authenticated user
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        // You can perform additional checks or return any information about the authenticated user
-        return ResponseEntity.ok("Authenticated User: " + username);
+        return authService.checkAuthentication();
     }
 
     @PostMapping("/changepassword")
     public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
-        // Retrieve the username of the authenticated user
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        // Find the user by username
-        User user = userRepository.findByUsername(username).orElse(null);
-
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
-        }
-
-        // Check if the old password matches
-        if (!encoder.matches(changePasswordRequest.getOldPassword(), user.getPassword())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid old password");
-        }
-
-        // Update the password
-        user.setPassword(encoder.encode(changePasswordRequest.getNewPassword()));
-        userRepository.save(user);
-
-        return ResponseEntity.ok("Password changed successfully");
+        return authService.changePassword(changePasswordRequest);
     }
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
-        // Check if username is empty or exceeds max size
-        if (StringUtils.isBlank(signUpRequest.getUsername()) || signUpRequest.getUsername().length() > 254) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is empty or too long!"));
-        }
-
-        // Check if email is empty or exceeds max size
-        if (StringUtils.isBlank(signUpRequest.getEmail()) || signUpRequest.getEmail().length() > 254) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is empty or too long!"));
-        }
-
-        // Check if password is empty or exceeds max size
-        if (StringUtils.isBlank(signUpRequest.getPassword()) || signUpRequest.getPassword().length() > 254) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Password is empty or too long!"));
-        }
-
-        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Username is already taken!"));
-        }
-
-        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Email is already in use!"));
-        }
-
-        // Create new user's account
-        User user = new User(signUpRequest.getUsername(),
-                signUpRequest.getEmail(),
-                encoder.encode(signUpRequest.getPassword()));
-
-        userRepository.save(user);
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(signUpRequest.getUsername(), signUpRequest.getPassword()));
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateJwtToken(authentication);
-
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-
-        return ResponseEntity.ok(new JwtResponse(jwt,
-                userDetails.getId(),
-                userDetails.getUsername(),
-                userDetails.getEmail()));
+        return authService.registerUser(signUpRequest);
     }
-
 }

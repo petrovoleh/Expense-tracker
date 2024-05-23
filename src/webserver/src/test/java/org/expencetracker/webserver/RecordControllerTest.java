@@ -229,6 +229,6 @@ public class RecordControllerTest {
 
         mockMvc.perform(delete("/api/record/1"))
                 .andExpect(status().isUnauthorized())
-                .andExpect(content().string("User unauthorized to change this record"));
+                .andExpect(content().string("User unauthorized to delete this record"));
     }
 }
