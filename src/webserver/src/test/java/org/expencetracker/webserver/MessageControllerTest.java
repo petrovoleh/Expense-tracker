@@ -18,7 +18,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.Optional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -47,12 +46,15 @@ public class MessageControllerTest {
         user = new User();
         user.setId("1");
         user.setUsername("testuser");
+        user.setEmail("testuser@example.com");
 
         message = new Message();
         message.setId("1");
         message.setUserId(user.getId());
-        message.setDescription("Test message");
+        message.setText("Test message");
         message.setDate(LocalDateTime.now());
+
+        Mockito.when(userRepository.findByUsername("testuser")).thenReturn(java.util.Optional.of(user));
     }
 
     @Test
@@ -66,24 +68,24 @@ public class MessageControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value("1"))
                 .andExpect(jsonPath("$.userId").value(user.getId()))
-                .andExpect(jsonPath("$.description").value("Test message"))
+                .andExpect(jsonPath("$.text").value("Test message"))
                 .andExpect(jsonPath("$.date").isNotEmpty());
     }
 
     @Test
     @WithMockUser(username = "testuser")
-    public void testGetMessagesByUserIdAndDateRange_Success() throws Exception {
+    public void testGetMessagesByDateRange_Success() throws Exception {
         LocalDateTime fromDate = LocalDateTime.now().minusDays(1);
         LocalDateTime toDate = LocalDateTime.now().plusDays(1);
 
         Mockito.when(messageRepository.findByUserIdAndDateBetween(user.getId(), fromDate, toDate))
                 .thenReturn(Collections.singletonList(message));
 
-        mockMvc.perform(get("/api/message/user/{userId}/from/{fromDate}/to/{toDate}", user.getId(), fromDate.toString(), toDate.toString()))
+        mockMvc.perform(get("/api/message/from/{fromDate}/to/{toDate}", fromDate.toString(), toDate.toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value("1"))
                 .andExpect(jsonPath("$[0].userId").value(user.getId()))
-                .andExpect(jsonPath("$[0].description").value("Test message"))
+                .andExpect(jsonPath("$[0].text").value("Test message"))
                 .andExpect(jsonPath("$[0].date").isNotEmpty());
     }
 
@@ -92,11 +94,11 @@ public class MessageControllerTest {
     public void testGetAllMessagesByUserId_Success() throws Exception {
         Mockito.when(messageRepository.findByUserId(user.getId())).thenReturn(Collections.singletonList(message));
 
-        mockMvc.perform(get("/api/message/user/{userId}", user.getId()))
+        mockMvc.perform(get("/api/message/user"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value("1"))
                 .andExpect(jsonPath("$[0].userId").value(user.getId()))
-                .andExpect(jsonPath("$[0].description").value("Test message"))
+                .andExpect(jsonPath("$[0].text").value("Test message"))
                 .andExpect(jsonPath("$[0].date").isNotEmpty());
     }
 }

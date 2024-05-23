@@ -14,7 +14,7 @@ public class Message {
     private String userId;
 
     @NotBlank
-    private String description;
+    private String text;
 
     @NotNull
     private LocalDateTime date;
@@ -36,12 +36,12 @@ public class Message {
         this.userId = userId;
     }
 
-    public String getDescription() {
-        return description;
+    public String getText() {
+        return text;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setText(String description) {
+        this.text = description;
     }
 
     public LocalDateTime getDate() {
