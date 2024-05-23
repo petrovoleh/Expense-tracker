@@ -2,9 +2,9 @@ package org.expencetracker.webserver.component.controller;
 
 import jakarta.validation.Valid;
 import org.expencetracker.webserver.component.models.Budget;
+import org.expencetracker.webserver.component.models.User;
 import org.expencetracker.webserver.component.repository.BudgetRepository;
-import org.expencetracker.webserver.component.security.jwt.JwtUtils;
-import org.expencetracker.webserver.component.security.services.UserDetailsImpl;
+import org.expencetracker.webserver.component.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,43 +23,49 @@ public class BudgetController {
     private BudgetRepository budgetRepository;
 
     @Autowired
-    private JwtUtils jwtUtils;
+    private UserRepository userRepository;
 
     @PostMapping("/add")
-    public ResponseEntity<?> addBudget(@Valid @RequestBody Budget budget, @RequestHeader("Authorization") String token) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        // Set the user ID for the budget
-        budget.setUserId(userDetails.getId());
+    public ResponseEntity<?> addBudget(@Valid @RequestBody Budget budget) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username).orElse(null);
 
-        // Save the budget to the database
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
+        }
+
+        budget.setUserId(user.getId());
         Budget savedBudget = budgetRepository.save(budget);
-
-        // Return a response with the saved budget
         return ResponseEntity.ok(savedBudget);
     }
 
-
     @GetMapping("/user")
-    public ResponseEntity<?> getBudgetsByUserId(@RequestHeader("Authorization") String token) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        List<Budget> budgets = budgetRepository.findByUserId(userDetails.getId());
+    public ResponseEntity<?> getBudgetsByUserId() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username).orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
+        }
+
+        List<Budget> budgets = budgetRepository.findByUserId(user.getId());
         return ResponseEntity.ok(budgets);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateBudget(@PathVariable String id, @Valid @RequestBody Budget budgetDetails) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        String currentUserId = userDetails.getId();
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username).orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
+        }
 
         Optional<Budget> budgetOptional = budgetRepository.findById(id);
         if (budgetOptional.isPresent()) {
             Budget budget = budgetOptional.get();
 
-            // Check if the authenticated user is the owner of the budget
-            if (!budget.getUserId().equals(currentUserId)) {
+            if (!budget.getUserId().equals(user.getId())) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not authorized to update this budget");
             }
 
@@ -73,17 +79,19 @@ public class BudgetController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteBudget(@RequestHeader("Authorization") String token, @PathVariable String id) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        String currentUserId = userDetails.getId();
+    public ResponseEntity<?> deleteBudget(@PathVariable String id) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username).orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
+        }
 
         Optional<Budget> budgetOptional = budgetRepository.findById(id);
         if (budgetOptional.isPresent()) {
             Budget budget = budgetOptional.get();
 
-            // Check if the authenticated user is the owner of the budget
-            if (!budget.getUserId().equals(currentUserId)) {
+            if (!budget.getUserId().equals(user.getId())) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not authorized to delete this budget");
             }
 
@@ -95,23 +103,21 @@ public class BudgetController {
     }
 
     @DeleteMapping("/user")
-    public ResponseEntity<?> deleteBudgetsByUserId(@RequestHeader("Authorization") String token) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        String currentUserId = userDetails.getId();
+    public ResponseEntity<?> deleteBudgetsByUserId() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username).orElse(null);
 
-        // Find budgets associated with the authenticated user
-        List<Budget> userBudgets = budgetRepository.findByUserId(currentUserId);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
+        }
 
-        // Check if the user has any budgets
+        List<Budget> userBudgets = budgetRepository.findByUserId(user.getId());
+
         if (userBudgets.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
-        // Delete all budgets associated with the authenticated user
         budgetRepository.deleteAll(userBudgets);
-
         return ResponseEntity.ok("Budgets deleted successfully");
     }
-
 }
