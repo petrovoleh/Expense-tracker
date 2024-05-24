@@ -1,6 +1,8 @@
 package org.expencetracker.webserver.component.models;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -9,33 +11,40 @@ public class Budget {
     @Id
     private String id;
 
+    @Size(max = 50)
     @NotBlank
     private String name;
 
-    @NotBlank
+    @NotNull
     private int budget;
 
+    @Size(max = 255)
     @NotBlank
     private String userId;
 
-    public Budget() {}
+    public Budget() {
+    }
 
-    public Budget(String name, int budget) {
+    public Budget(String id, String name, String userId, int budget) {
+        this.id = id;
         this.name = name;
         this.budget = budget;
+        this.userId = userId;
     }
 
-    public String getName(){
+    public String getName() {
         return name;
     }
-    public int getBudget(){
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getBudget() {
         return budget;
     }
 
-    public void setName(String name){
-        this.name = name;
-    }
-    public void setBudget(int budget){
+    public void setBudget(int budget) {
         this.budget = budget;
     }
 
@@ -47,5 +56,11 @@ public class Budget {
         this.userId = userId;
     }
 
+    public String getId() {
+        return id;
+    }
 
+    public void setId(String id) {
+        this.id = id;
+    }
 }

@@ -1,38 +1,34 @@
 package org.expencetracker.webserver;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-
-import java.util.Optional;
-
-import org.expencetracker.webserver.component.controller.AuthController;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.expencetracker.webserver.component.models.User;
 import org.expencetracker.webserver.component.payload.request.ChangePasswordRequest;
 import org.expencetracker.webserver.component.payload.request.LoginRequest;
 import org.expencetracker.webserver.component.payload.request.SignUpRequest;
-import org.expencetracker.webserver.component.payload.request.UpdateProfileRequest;
 import org.expencetracker.webserver.component.repository.UserRepository;
 import org.expencetracker.webserver.component.security.jwt.JwtUtils;
 import org.expencetracker.webserver.component.security.services.UserDetailsImpl;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.boot.test.context.SpringBootTest;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.Optional;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @AutoConfigureMockMvc

@@ -2,6 +2,7 @@ package org.expencetracker.webserver.component.models;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -12,15 +13,18 @@ public class Record {
     @Id
     private String id;
 
+    @Size(max = 255)
     @NotBlank
     private String userId;
 
+    @Size(max = 50)
     @NotBlank
     private String category;
 
     @NotNull
     private Double value;
 
+    @Size(max = 1000)
     @NotBlank
     private String description;
 

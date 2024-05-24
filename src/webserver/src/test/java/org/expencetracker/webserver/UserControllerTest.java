@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -17,6 +16,8 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -24,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class ProfileControllerTest {
+public class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -50,7 +51,7 @@ public class ProfileControllerTest {
     public void testDeleteAccount_Success() throws Exception {
         Mockito.when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(user));
 
-        mockMvc.perform(delete("/api/profile/delete"))
+        mockMvc.perform(delete("/api/user/delete"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Account deleted successfully"));
     }
@@ -60,7 +61,7 @@ public class ProfileControllerTest {
     public void testDeleteAccount_UserNotFound() throws Exception {
         Mockito.when(userRepository.findByUsername("testuser")).thenReturn(Optional.empty());
 
-        mockMvc.perform(delete("/api/profile/delete"))
+        mockMvc.perform(delete("/api/user/delete"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(content().string("User not found"));
     }
@@ -68,10 +69,14 @@ public class ProfileControllerTest {
     @Test
     @WithMockUser(username = "testuser")
     public void testUploadAvatar_Success() throws Exception {
-        MockMultipartFile file = new MockMultipartFile("file", "avatar.png", MediaType.IMAGE_PNG_VALUE, "test image".getBytes());
+        byte[] fileContent = Files.readAllBytes(Paths.get("./public/images/test-avatar.jpg"));
+
+        // Create a mock file
+        MockMultipartFile file = new MockMultipartFile("file", "avatar.jpg", "image/jpg", fileContent);
+
         Mockito.when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(user));
 
-        mockMvc.perform(multipart("/api/profile/avatar")
+        mockMvc.perform(multipart("/api/user/avatar")
                         .file(file))
                 .andExpect(status().isOk())
                 .andExpect(content().string("File uploaded successfully"));
@@ -83,7 +88,7 @@ public class ProfileControllerTest {
         MockMultipartFile file = new MockMultipartFile("file", "avatar.png", MediaType.IMAGE_PNG_VALUE, "test image".getBytes());
         Mockito.when(userRepository.findByUsername("testuser")).thenReturn(Optional.empty());
 
-        mockMvc.perform(multipart("/api/profile/avatar")
+        mockMvc.perform(multipart("/api/user/avatar")
                         .file(file))
                 .andExpect(status().isUnauthorized())
                 .andExpect(content().string("User not found"));
@@ -96,7 +101,7 @@ public class ProfileControllerTest {
         MockMultipartFile file = new MockMultipartFile("file", "largefile.png", MediaType.IMAGE_PNG_VALUE, largeFile);
         Mockito.when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(user));
 
-        mockMvc.perform(multipart("/api/profile/avatar")
+        mockMvc.perform(multipart("/api/user/avatar")
                         .file(file))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("File size exceeds the maximum limit of 10 MB"));
@@ -108,7 +113,7 @@ public class ProfileControllerTest {
         MockMultipartFile file = new MockMultipartFile("file", "emptyfile.png", MediaType.IMAGE_PNG_VALUE, new byte[0]);
         Mockito.when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(user));
 
-        mockMvc.perform(multipart("/api/profile/avatar")
+        mockMvc.perform(multipart("/api/user/avatar")
                         .file(file))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("Please select a file to upload"));
@@ -120,7 +125,7 @@ public class ProfileControllerTest {
         UpdateProfileRequest updateProfileRequest = new UpdateProfileRequest("newname", "newemail@example.com");
         Mockito.when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(user));
 
-        mockMvc.perform(put("/api/profile/update")
+        mockMvc.perform(put("/api/user/update")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateProfileRequest)))
                 .andExpect(status().isOk())
@@ -133,7 +138,7 @@ public class ProfileControllerTest {
         UpdateProfileRequest updateProfileRequest = new UpdateProfileRequest("newname", "newemail@example.com");
         Mockito.when(userRepository.findByUsername("testuser")).thenReturn(Optional.empty());
 
-        mockMvc.perform(put("/api/profile/update")
+        mockMvc.perform(put("/api/user/update")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateProfileRequest)))
                 .andExpect(status().isUnauthorized())

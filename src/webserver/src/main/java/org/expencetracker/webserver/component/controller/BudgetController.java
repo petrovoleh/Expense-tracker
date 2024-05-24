@@ -2,83 +2,71 @@ package org.expencetracker.webserver.component.controller;
 
 import jakarta.validation.Valid;
 import org.expencetracker.webserver.component.models.Budget;
-import org.expencetracker.webserver.component.repository.BudgetRepository;
-import org.expencetracker.webserver.component.security.jwt.JwtUtils;
-import org.expencetracker.webserver.component.security.services.UserDetailsImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.expencetracker.webserver.component.service.BudgetService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/budget")
 public class BudgetController {
 
-    @Autowired
-    private BudgetRepository budgetRepository;
+    private final BudgetService budgetService;
 
-    @Autowired
-    private JwtUtils jwtUtils;
+    public BudgetController(BudgetService budgetService) {
+        this.budgetService = budgetService;
+    }
 
+    /**
+     * Adds a new budget.
+     *
+     * @param budget the budget to be added
+     * @return a ResponseEntity containing the saved budget
+     */
     @PostMapping("/add")
-    public ResponseEntity<?> addBudget(@Valid @RequestBody Budget budget, @RequestHeader("Authorization") String token) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        // Set the user ID for the budget
-        budget.setUserId(userDetails.getId());
-
-        // Save the budget to the database
-        Budget savedBudget = budgetRepository.save(budget);
-
-        // Return a response with the saved budget
-        return ResponseEntity.ok(savedBudget);
+    public ResponseEntity<?> addBudget(@Valid @RequestBody Budget budget) {
+        return budgetService.addBudget(budget);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getBudgetById(@PathVariable String id) {
-        Optional<Budget> budget = budgetRepository.findById(id);
-        if (budget.isPresent()) {
-            return ResponseEntity.ok(budget.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
+    /**
+     * Gets all budgets for the authenticated user.
+     *
+     * @return a ResponseEntity containing the list of budgets
+     */
     @GetMapping("/user")
-    public ResponseEntity<?> getBudgetsByUserId(@RequestHeader("Authorization") String token) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        List<Budget> budgets = budgetRepository.findByUserId(userDetails.getId());
-        return ResponseEntity.ok(budgets);
+    public ResponseEntity<?> getBudgetsByUserId() {
+        return budgetService.getBudgetsByUserId();
     }
 
+    /**
+     * Updates an existing budget.
+     *
+     * @param id the ID of the budget to be updated
+     * @param budgetDetails the new details of the budget
+     * @return a ResponseEntity containing the updated budget
+     */
     @PutMapping("/{id}")
     public ResponseEntity<?> updateBudget(@PathVariable String id, @Valid @RequestBody Budget budgetDetails) {
-        Optional<Budget> budgetOptional = budgetRepository.findById(id);
-        if (budgetOptional.isPresent()) {
-            Budget budget = budgetOptional.get();
-            budget.setName(budgetDetails.getName());
-            budget.setBudget(budgetDetails.getBudget());
-            budget.setUserId(budgetDetails.getUserId());
-            Budget updatedBudget = budgetRepository.save(budget);
-            return ResponseEntity.ok(updatedBudget);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return budgetService.updateBudget(id, budgetDetails);
     }
 
+    /**
+     * Deletes a budget by its ID.
+     *
+     * @param id the ID of the budget to be deleted
+     * @return a ResponseEntity indicating the result of the operation
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteBudget(@PathVariable String id) {
-        Optional<Budget> budgetOptional = budgetRepository.findById(id);
-        if (budgetOptional.isPresent()) {
-            budgetRepository.deleteById(id);
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return budgetService.deleteBudget(id);
+    }
+
+    /**
+     * Deletes all budgets for the authenticated user.
+     *
+     * @return a ResponseEntity indicating the result of the operation
+     */
+    @DeleteMapping("/user")
+    public ResponseEntity<?> deleteBudgetsByUserId() {
+        return budgetService.deleteBudgetsByUserId();
     }
 }
