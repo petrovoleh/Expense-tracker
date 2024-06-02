@@ -3,7 +3,10 @@ package com.expensetracker.ui.signup;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
+import com.expensetracker.R;
 import com.expensetracker.data.FileManager;
 import com.expensetracker.network.ApiClient;
 import com.expensetracker.validators.Validator;
@@ -11,6 +14,9 @@ import com.expensetracker.validators.Validator;
 import org.json.JSONException;
 import org.json.JSONObject;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -23,19 +29,27 @@ public class SignUpViewModel extends ViewModel {
 
     private final MutableLiveData<String> errorText = new MutableLiveData<>();
     private FileManager fileManager;
+    NavController navController;
 
     public LiveData<String> getErrorText() {
         return errorText;
     }
 
-    public void signUp(TextView textView, Context context, String username, String email, String password) {
-        if (!Validator.validateName(context, username,textView) ||
-                !Validator.validateEmail(context, email,textView) ||
-                !Validator.validatePassword(context, password,textView)) {
-            errorText.setValue("Validation failed");
+    public void signUp(Context context, String username, String email, String password, NavController navController) {
+        String errorCode = Validator.validateNameString(context, username);
+        if (errorCode == null) {
+            errorCode = Validator.validateEmailString(context, email);
+        }
+        if (errorCode == null) {
+            errorCode = Validator.validatePasswordString(context, password);
+        }
+        if (errorCode != null) {
+            errorText.setValue(errorCode);
             return;
         }
 
+        fileManager = new FileManager(context);
+        this.navController = navController;
         JSONObject requestBody = new JSONObject();
         try {
             requestBody.put("username", username);
@@ -68,8 +82,9 @@ public class SignUpViewModel extends ViewModel {
                     json.put("email", jsonResponse.getString("email"));
                     json.put("accessToken", jsonResponse.getString("accessToken"));
                     json.put("tokenType", jsonResponse.getString("tokenType"));
-
+                    Log.d("tag", responseData);
                     fileManager.writeToFile("accountdata.json", json);
+                    new Handler(Looper.getMainLooper()).post(() -> navigateToProfile());
                 } catch (JSONException e) {
                     handleError(responseData);
                 }
@@ -85,7 +100,8 @@ public class SignUpViewModel extends ViewModel {
             }
         });
     }
-
+    private void navigateToProfile() {navController.navigate(R.id.navigation_profile);
+    }
     public void setFileManager(FileManager fileManager) {
         this.fileManager = fileManager;
     }

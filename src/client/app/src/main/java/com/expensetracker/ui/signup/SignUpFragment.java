@@ -22,12 +22,19 @@ public class SignUpFragment extends Fragment {
 
     private FragmentSignupBinding binding;
     private SignUpViewModel signUpViewModel;
-
+    NavController navController;
+    @Override
+    public void onResume() {
+        super.onResume();
+        BottomNavigationView bottomNavigationView = requireActivity().findViewById(R.id.nav_view);
+        bottomNavigationView.setSelectedItemId(R.id.navigation_profile);
+    }
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         signUpViewModel = new ViewModelProvider(this).get(SignUpViewModel.class);
         binding = FragmentSignupBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+        NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
 
         BottomNavigationView bottomNavigationView = requireActivity().findViewById(R.id.nav_view);
         bottomNavigationView.setSelectedItemId(R.id.navigation_profile);
@@ -47,16 +54,16 @@ public class SignUpFragment extends Fragment {
             String username = usernameEditText.getText().toString().trim();
             String email = emailEditText.getText().toString().trim();
             String password = passwordEditText.getText().toString().trim();
-            signUpViewModel.signUp(errorText, getContext(), username, email, password);
+            signUpViewModel.signUp(getContext(), username, email, password, navController);
         });
 
         return root;
     }
 
     private void navigateToSignIn() {
-        NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
         navController.navigate(R.id.navigation_signin);
     }
+
 
     @Override
     public void onDestroyView() {

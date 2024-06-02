@@ -56,9 +56,6 @@ public class ProfileFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        ProfileViewModel homeViewModel =
-                new ViewModelProvider(this).get(ProfileViewModel.class);
-
         binding = FragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         File avatarFile = new File(requireContext().getFilesDir(), "avatars/avatar.jpg");
@@ -73,8 +70,7 @@ public class ProfileFragment extends Fragment {
             // If data doesn't exist, navigate the user to the sign-in page
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
             navController.navigate(R.id.navigation_signin);
-            BottomNavigationView bottomNavigationView = requireActivity().findViewById(R.id.nav_view);
-            bottomNavigationView.setSelectedItemId(R.id.navigation_profile);
+
         } else {
             // If account data exists, load username and email
             try {

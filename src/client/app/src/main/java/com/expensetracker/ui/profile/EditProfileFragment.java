@@ -159,7 +159,7 @@ public class EditProfileFragment extends Fragment {
                 .build();
 
         Request request = new Request.Builder()
-                .url(MainActivity.baseUrl + "/api/profile/avatar")
+                .url(MainActivity.baseUrl + "/api/user/avatar")
                 .addHeader("Authorization", "Bearer " + token)
                 .post(requestBody)
                 .build();
@@ -289,7 +289,7 @@ public class EditProfileFragment extends Fragment {
         RequestBody requestBody = RequestBody.create(JSON, jsonObject.toString());
 
         Request request = new Request.Builder()
-                .url(MainActivity.baseUrl + "/api/profile")
+                .url(MainActivity.baseUrl + "/api/user")
                 .addHeader("Authorization", "Bearer " + token)
                 .put(requestBody)
                 .build();

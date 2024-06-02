@@ -23,7 +23,9 @@ public class Suggestion {
             if (suggestion!= null)
                 suggestions.add(suggestion);
         }
-
+        if(suggestions.isEmpty()){
+            suggestions.add("There is no suggestions for today");
+        }
         return suggestions;
     }
 

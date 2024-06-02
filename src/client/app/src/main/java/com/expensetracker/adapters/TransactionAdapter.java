@@ -52,8 +52,14 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     @Override
     public void onBindViewHolder(@NonNull TransactionViewHolder holder, int position) {
         if (transactions.isEmpty()){
+            holder.buttonDelete.setVisibility(View.INVISIBLE);
+            holder.buttonDelete.setEnabled(false);
             holder.textViewTransaction.setText(holder.itemView.getContext().getString(R.string.no_records_message));
             return;
+        }
+        else{
+            holder.buttonDelete.setVisibility(View.VISIBLE);
+            holder.buttonDelete.setEnabled(true);
         }
         Transaction transaction = transactions.get(position);
         Locale currentLocale = Locale.getDefault();

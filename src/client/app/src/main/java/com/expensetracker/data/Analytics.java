@@ -32,7 +32,14 @@ public class Analytics {
         AppDatabase database = MainActivity.getDatabase();
         transactionDao = database.transactionDao();
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DAY_OF_MONTH, 1); // Set the day to 1 to get the first day of the month
+                // Set the calendar to the first day of the current month
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+
+        // Set the time to 00:01
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 1);
+
+        // Get the start date
         startDate = calendar.getTime();
     }
 

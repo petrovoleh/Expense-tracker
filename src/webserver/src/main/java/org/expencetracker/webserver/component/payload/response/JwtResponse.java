@@ -1,19 +1,19 @@
 package org.expencetracker.webserver.component.payload.response;
 
-import java.util.List;
-
 public class JwtResponse {
 	private String token;
 	private String type = "Bearer";
 	private String id;
 	private String username;
 	private String email;
+	private String avatar;
 
-	public JwtResponse(String accessToken, String id, String username, String email) {
+	public JwtResponse(String accessToken, String id, String username, String email, String avatar) {
 		this.token = accessToken;
 		this.id = id;
 		this.username = username;
 		this.email = email;
+		this.avatar = avatar;
 	}
 
 	public String getAccessToken() {
@@ -38,6 +38,13 @@ public class JwtResponse {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+	public String getAvatar() {
+		return avatar;
+	}
+
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
 	}
 
 	public String getEmail() {
