@@ -140,7 +140,6 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
-
                 // Навигация к навигационному пункту signup
                 navController.navigate(R.id.navigation_edit_profile);
             }
@@ -172,6 +171,7 @@ public class ProfileFragment extends Fragment {
 
         return root;
     }
+
     private String getTokenFromFile() {
         JSONObject accountData = fileManager.readFromFile("accountdata.json");
         try {
@@ -236,8 +236,6 @@ public class ProfileFragment extends Fragment {
     }
     @Override
     public void onResume() {
-        BottomNavigationView bottomNavigationView = requireActivity().findViewById(R.id.nav_view);
-        bottomNavigationView.setSelectedItemId(R.id.navigation_profile);
         super.onResume();
         if (!checkAccountData()) {
             // If data doesn't exist, navigate the user to the sign-in page

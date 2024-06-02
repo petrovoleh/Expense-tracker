@@ -2,6 +2,8 @@ package com.expensetracker.ui.signup;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -26,8 +28,14 @@ public class SignUpFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        BottomNavigationView bottomNavigationView = requireActivity().findViewById(R.id.nav_view);
-        bottomNavigationView.setSelectedItemId(R.id.navigation_profile);
+        requireActivity().findViewById(android.R.id.content).post(() -> {
+            BottomNavigationView bottomNavigationView = requireActivity().findViewById(R.id.nav_view);
+            Menu menu = bottomNavigationView.getMenu();
+            for (int i = 0, size = menu.size(); i < size; i++) {
+                MenuItem item = menu.getItem(i);
+                item.setChecked(item.getItemId() == R.id.navigation_profile);
+            }
+        });
     }
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -35,9 +43,6 @@ public class SignUpFragment extends Fragment {
         binding = FragmentSignupBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
-
-        BottomNavigationView bottomNavigationView = requireActivity().findViewById(R.id.nav_view);
-        bottomNavigationView.setSelectedItemId(R.id.navigation_profile);
 
         final TextView errorText = binding.errorText;
         final EditText usernameEditText = binding.usernameEditText;
@@ -61,6 +66,7 @@ public class SignUpFragment extends Fragment {
     }
 
     private void navigateToSignIn() {
+        NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
         navController.navigate(R.id.navigation_signin);
     }
 

@@ -100,9 +100,12 @@ public class BudgetsFragment extends Fragment {
     private void saveBudgets() {
         for (int i = 0; i < 10; i++) {
             String text = editTextCategories[i].getText().toString();
-            if (!text.isEmpty()) {
-                int budget = Integer.parseInt(text);
-                if (budget <= 100000) {
+            if (!text.isEmpty() ) {
+                int budget = 100000;
+                if (text.length() < 10) {
+                    budget = Integer.parseInt(text);
+                }
+                if (budget < 100000) {
                     if (budget > 0) {
                     Categories.getCategories().get(i).setBudget(budget);
                     }

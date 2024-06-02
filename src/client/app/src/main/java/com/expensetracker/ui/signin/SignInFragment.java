@@ -7,6 +7,8 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -90,9 +92,14 @@ public class SignInFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d("tag", "resume");
-        BottomNavigationView bottomNavigationView = requireActivity().findViewById(R.id.nav_view);
-        bottomNavigationView.setSelectedItemId(R.id.navigation_profile);
+        requireActivity().findViewById(android.R.id.content).post(() -> {
+            BottomNavigationView bottomNavigationView = requireActivity().findViewById(R.id.nav_view);
+            Menu menu = bottomNavigationView.getMenu();
+            for (int i = 0, size = menu.size(); i < size; i++) {
+                MenuItem item = menu.getItem(i);
+                item.setChecked(item.getItemId() == R.id.navigation_profile);
+            }
+        });
     }
     private void signIn() {
         String username = usernameEditText.getText().toString().trim();

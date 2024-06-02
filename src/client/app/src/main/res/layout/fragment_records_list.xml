@@ -57,7 +57,6 @@
         android:layout_marginTop="20dp"
         android:text="month"
         android:textAllCaps="true"
-        android:textColor="#3E3E3E"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
