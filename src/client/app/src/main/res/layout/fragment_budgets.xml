@@ -12,7 +12,7 @@
 
     <EditText
         android:id="@+id/editTextCategory1"
-        android:layout_width="200dp"
+        android:layout_width="160dp"
         android:layout_height="46dp"
         android:layout_marginTop="25dp"
         android:hint="Budget 1"
@@ -28,7 +28,7 @@
         android:id="@+id/textCategory1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
+        android:layout_marginStart="50dp"
         android:layout_marginTop="32dp"
         android:text="Text"
         android:textSize="24sp"
@@ -38,7 +38,7 @@
 
     <EditText
         android:id="@+id/editTextCategory2"
-        android:layout_width="200dp"
+        android:layout_width="160dp"
         android:layout_height="46dp"
         android:layout_marginTop="15dp"
         android:hint="Budget 2"
@@ -54,18 +54,18 @@
         android:id="@+id/textCategory2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
+        android:layout_marginStart="50dp"
         android:layout_marginTop="23dp"
         android:text="Text"
         android:textSize="24sp"
-        
+
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextCategory1" />
 
     <!-- Category 3 -->
     <EditText
         android:id="@+id/editTextCategory3"
-        android:layout_width="200dp"
+        android:layout_width="160dp"
         android:layout_height="46dp"
         android:layout_marginTop="15dp"
         android:hint="Budget 3"
@@ -81,7 +81,7 @@
         android:id="@+id/textCategory3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
+        android:layout_marginStart="50dp"
         android:layout_marginTop="23dp"
         android:text="Text"
         android:textSize="24sp"
@@ -92,7 +92,7 @@
     <!-- Category 4 -->
     <EditText
         android:id="@+id/editTextCategory4"
-        android:layout_width="200dp"
+        android:layout_width="160dp"
         android:layout_height="46dp"
         android:layout_marginTop="15dp"
         android:hint="Budget 4"
@@ -108,7 +108,7 @@
         android:id="@+id/textCategory4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
+        android:layout_marginStart="50dp"
         android:layout_marginTop="23dp"
         android:text="Text"
         android:textSize="24sp"
@@ -120,7 +120,7 @@
     <!-- Category 5 -->
     <EditText
         android:id="@+id/editTextCategory5"
-        android:layout_width="200dp"
+        android:layout_width="160dp"
         android:layout_height="46dp"
         android:layout_marginTop="15dp"
         android:hint="Budget 5"
@@ -136,7 +136,7 @@
         android:id="@+id/textCategory5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
+        android:layout_marginStart="50dp"
         android:layout_marginTop="23dp"
         android:text="Text"
         android:textSize="24sp"
@@ -147,7 +147,7 @@
     <!-- Category 6 -->
     <EditText
         android:id="@+id/editTextCategory6"
-        android:layout_width="200dp"
+        android:layout_width="160dp"
         android:layout_height="46dp"
         android:layout_marginTop="15dp"
         android:hint="Budget 6"
@@ -163,7 +163,7 @@
         android:id="@+id/textCategory6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
+        android:layout_marginStart="50dp"
         android:layout_marginTop="23dp"
         android:text="Text"
         android:textSize="24sp"
@@ -174,7 +174,7 @@
     <!-- Category 7 -->
     <EditText
         android:id="@+id/editTextCategory7"
-        android:layout_width="200dp"
+        android:layout_width="160dp"
         android:layout_height="46dp"
         android:layout_marginTop="15dp"
         android:hint="Budget 7"
@@ -190,7 +190,7 @@
         android:id="@+id/textCategory7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
+        android:layout_marginStart="50dp"
         android:layout_marginTop="23dp"
         android:text="Text"
         android:textSize="24sp"
@@ -201,7 +201,7 @@
     <!-- Category 8 -->
     <EditText
         android:id="@+id/editTextCategory8"
-        android:layout_width="200dp"
+        android:layout_width="160dp"
         android:layout_height="46dp"
         android:layout_marginTop="15dp"
         android:hint="Budget 8"
@@ -217,7 +217,7 @@
         android:id="@+id/textCategory8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
+        android:layout_marginStart="50dp"
         android:layout_marginTop="23dp"
         android:text="Text"
         android:textSize="24sp"
@@ -228,7 +228,7 @@
     <!-- Category 9 -->
     <EditText
         android:id="@+id/editTextCategory9"
-        android:layout_width="200dp"
+        android:layout_width="160dp"
         android:layout_height="46dp"
         android:layout_marginTop="15dp"
         android:hint="Budget 9"
@@ -244,7 +244,7 @@
         android:id="@+id/textCategory9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
+        android:layout_marginStart="50dp"
         android:layout_marginTop="23dp"
         android:text="Text"
         android:textSize="24sp"
@@ -255,7 +255,7 @@
     <!-- Category 10 -->
     <EditText
         android:id="@+id/editTextCategory10"
-        android:layout_width="200dp"
+        android:layout_width="160dp"
         android:layout_height="46dp"
         android:layout_marginTop="15dp"
         android:hint="Budget 10"
@@ -271,7 +271,7 @@
         android:id="@+id/textCategory10"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
+        android:layout_marginStart="50dp"
         android:layout_marginTop="23dp"
         android:text="Text"
         android:textSize="24sp"
