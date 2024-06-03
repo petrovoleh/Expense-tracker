@@ -55,9 +55,19 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             holder.buttonDelete.setVisibility(View.INVISIBLE);
             holder.buttonDelete.setEnabled(false);
             holder.textViewTransaction.setText(holder.itemView.getContext().getString(R.string.no_records_message));
+            ViewGroup.LayoutParams layoutParams = holder.textViewTransaction.getLayoutParams();
+            layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            holder.textViewTransaction.setLayoutParams(layoutParams);
             return;
         }
         else{
+            float scale = holder.itemView.getContext().getResources().getDisplayMetrics().density;
+            int widthInDp = 270; // Width in density-independent pixels (dp)
+            int widthInPx = (int) (widthInDp * scale + 0.5f); // Convert dp to px
+
+            ViewGroup.LayoutParams layoutParams = holder.textViewTransaction.getLayoutParams();
+            layoutParams.width = widthInPx; // Assign the width in pixels
+            holder.textViewTransaction.setLayoutParams(layoutParams);
             holder.buttonDelete.setVisibility(View.VISIBLE);
             holder.buttonDelete.setEnabled(true);
         }

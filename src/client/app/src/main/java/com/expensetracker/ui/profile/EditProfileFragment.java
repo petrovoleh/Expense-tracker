@@ -118,8 +118,7 @@ public class EditProfileFragment extends Fragment {
     private void saveProfile() {
         String username = binding.editTextName.getText().toString().trim();
         String email = binding.editTextEmail.getText().toString().trim();
-
-        if (Validator.validateName(getContext(), username, binding.editTextName)
+       if (!Validator.validateName(getContext(), username, binding.editTextName)
                 && Validator.validateEmail(getContext(), email, binding.editTextEmail)) {
             saveAccountData(username, email);
             Toast.makeText(requireContext(), "Account data saved", Toast.LENGTH_SHORT).show();
@@ -280,7 +279,7 @@ public class EditProfileFragment extends Fragment {
 
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("username", username);
+            jsonObject.put("name", username);
             jsonObject.put("email", email);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -289,7 +288,7 @@ public class EditProfileFragment extends Fragment {
         RequestBody requestBody = RequestBody.create(JSON, jsonObject.toString());
 
         Request request = new Request.Builder()
-                .url(MainActivity.baseUrl + "/api/user")
+                .url(MainActivity.baseUrl + "/api/user/update")
                 .addHeader("Authorization", "Bearer " + token)
                 .put(requestBody)
                 .build();
@@ -306,7 +305,7 @@ public class EditProfileFragment extends Fragment {
                 if (response.isSuccessful()) {
                     Log.d("response", response.body().string());
                 } else {
-                    Log.d("response", response.body().string());
+                    Log.e("response", response.body().string());
                 }
             }
         });

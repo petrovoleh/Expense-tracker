@@ -46,7 +46,7 @@ public class UserController {
      * @return a ResponseEntity indicating the result of the update operation.
      */
     @PutMapping("/update")
-    public ResponseEntity<?> updateProfile(@Valid @RequestBody UpdateProfileRequest updateRequest) {
+    public ResponseEntity<?> updateProfile(@RequestBody UpdateProfileRequest updateRequest) {
         return userService.updateProfile(updateRequest);
     }
 }
