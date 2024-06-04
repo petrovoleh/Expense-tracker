@@ -1,5 +1,6 @@
 package com.expensetracker.data;
 
+import android.health.connect.datatypes.units.Length;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -36,7 +37,7 @@ public class Categories {
         categoryDao.getAllCategories().observeForever(new Observer<List<Category>>() {
             @Override
             public void onChanged(List<Category> retrievedCategories) {
-                if (retrievedCategories == null || retrievedCategories.isEmpty()) {
+                if (retrievedCategories == null || retrievedCategories.isEmpty() || retrievedCategories.size() <10) {
                     categories = new ArrayList<>();
                     for (String categoryName : categoriesNames) {
                         Category category = new Category();

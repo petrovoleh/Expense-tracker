@@ -53,6 +53,25 @@ public class UserService {
         return ResponseEntity.ok("Account deleted successfully");
     }
 
+    public ResponseEntity<String> deleteAvatar() {
+        User user = getAuthenticatedUser();
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
+        }
+
+        String oldAvatar = user.getAvatar();
+        if (oldAvatar != null) {
+            File oldAvatarFile = new File("./public/images/" + oldAvatar);
+            if (oldAvatarFile.exists()) {
+                oldAvatarFile.delete();
+            }
+        }
+
+        user.setAvatar(null);
+        userRepository.save(user);
+        return ResponseEntity.ok("Avatar deleted successfully");
+    }
+
     /**
      * Handles the upload of a user's avatar image.
      *
@@ -80,6 +99,13 @@ public class UserService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Incorrect file extension");
         }
         try {
+            String oldAvatar = user.getAvatar();
+            if (oldAvatar != null) {
+                File oldAvatarFile = new File("./public/images/" + oldAvatar);
+                if (oldAvatarFile.exists()) {
+                    oldAvatarFile.delete();
+                }
+            }
             // Generate a random file name with the correct extension
             String randomFileName = UUID.randomUUID() + extension;
             String directoryPath = "./public/images/";

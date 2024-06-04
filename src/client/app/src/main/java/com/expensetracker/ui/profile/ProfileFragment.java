@@ -189,7 +189,7 @@ public class ProfileFragment extends Fragment {
         // Create DELETE request to the delete account endpoint
         Request request = new Request.Builder()
                 .delete()
-                .url(MainActivity.baseUrl+"/api/profile/delete")
+                .url(MainActivity.baseUrl+"/api/user/delete")
                 .addHeader("Authorization", "Bearer " + token)
                 .build();
 

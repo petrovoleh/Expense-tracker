@@ -56,13 +56,15 @@ public class Analytics {
 
     public int getAllocated(String categoryName) {
         Category category = Categories.getCategory(categoryName);
-        assert category != null;
+        if (category == null)
+            return 0;
         return category.getBudget();
     }
 
     public int getAvailable(String categoryName) {
         Category category = Categories.getCategory(categoryName);
-        assert category != null;
+        if (category == null)
+            return 0;
         int all = category.getBudget();
 
         // Observe the LiveData for total value
@@ -75,7 +77,8 @@ public class Analytics {
 
     public void getAnalytics(String categoryName, AnalyticsCallback callback) {
         Category category = Categories.getCategory(categoryName);
-        assert category != null;
+        if (category == null)
+            return;
         int all = category.getBudget();
 
         // Create a single-threaded ExecutorService
