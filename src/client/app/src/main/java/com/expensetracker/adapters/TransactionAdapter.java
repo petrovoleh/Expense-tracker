@@ -3,29 +3,45 @@ package com.expensetracker.adapters;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.expensetracker.MainActivity;
 import com.expensetracker.R;
 import com.expensetracker.data.Currencies;
+import com.expensetracker.data.FileManager;
 import com.expensetracker.data.Notifications;
 import com.expensetracker.database.AppDatabase;
 import com.expensetracker.database.TransactionDao;
 import com.expensetracker.models.Transaction;
 import com.expensetracker.suggestions.Suggestion;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.TransactionViewHolder> {
     private final NumberFormat currency = Currencies.currency;
@@ -34,9 +50,11 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     private final TransactionDao transactionDao;
 
     private Context context; // Add context field
+    private FileManager fileManager;
 
     public TransactionAdapter(Context context, List<Transaction> transactions) {
         AppDatabase database = MainActivity.getDatabase();
+        fileManager = new FileManager(context);
         transactionDao = database.transactionDao();
         this.context = context; // Store context
         this.transactions = transactions;
@@ -103,6 +121,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             public void onClick(DialogInterface dialog, int which) {
                 ExecutorService executor = Executors.newSingleThreadExecutor();
                 executor.execute(() -> {
+                    deleteRecordRequest(transaction);
                     transactionDao.deleteTransaction(transaction);
                     executor.shutdown();
                 });
@@ -111,6 +130,47 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         builder.setNegativeButton("No", null);
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+    private String getTokenFromFile() {
+        JSONObject accountData = fileManager.readFromFile("accountdata.json");
+        try {
+            if (accountData != null && accountData.has("accessToken")) {
+                return accountData.getString("accessToken");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    private void deleteRecordRequest(Transaction transaction) {
+        String token = getTokenFromFile();
+        if (token == null || token.isEmpty()) {
+            return;
+        }
+
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url(MainActivity.baseUrl + "/api/record/"+transaction.getBackendId())
+                .addHeader("Authorization", "Bearer " + token)
+                .delete()
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    Log.d("record", "deleted successfully");
+                } else {
+                    Log.e("record", "was not deleted");
+                }
+            }
+        });
     }
     public void setTransactions(List<Transaction> transactions) {
         this.transactions = transactions;

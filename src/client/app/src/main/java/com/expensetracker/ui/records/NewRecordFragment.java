@@ -1,6 +1,7 @@
 package com.expensetracker.ui.records;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,11 @@ import com.expensetracker.MainActivity;
 import com.expensetracker.R;
 import com.expensetracker.data.Categories;
 import com.expensetracker.data.FileManager;
+import com.expensetracker.database.AppDatabase;
+import com.expensetracker.database.TransactionDao;
+import com.expensetracker.models.Transaction;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,6 +49,8 @@ public class NewRecordFragment extends Fragment {
     private EditText editTextPlace;
     private Context context;
     private FileManager fileManager;
+    private TransactionDao transactionDao;
+
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -55,7 +63,8 @@ public class NewRecordFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         newRecordViewModel =
                 new ViewModelProvider(this).get(NewRecordViewModel.class);
-
+        AppDatabase database = MainActivity.getDatabase();
+        transactionDao = database.transactionDao();
         View root = inflater.inflate(R.layout.fragment_new_record, container, false);
 
         Spinner spinnerCategory = root.findViewById(R.id.spinnerCategory);
@@ -80,13 +89,13 @@ public class NewRecordFragment extends Fragment {
 
             // Convert value to double if it's not empty
             double value = Double.parseDouble(valueText);
-            if(value >100000.0){
+            if(value > 100000.0){
                 value = 100000.0;
             }
             // Call the method in ViewModel to add the transaction
-            newRecordViewModel.addTransaction(category, value, place);
+            Transaction record = newRecordViewModel.addTransaction(category, value, place);
             // Получаем NavController из главной активности
-            saveRecord(category, value, place);
+            saveRecord(category, value, place, record);
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
 
             // Навигация к навигационному пункту signup
@@ -95,9 +104,10 @@ public class NewRecordFragment extends Fragment {
 
         return root;
     }
-    private void saveRecord(String category, double value, String place) {
+    private void saveRecord(String category, double value, String place, Transaction record) {
         String token = getTokenFromFile(); // Assuming you have a method to retrieve the auth token
         if(token == null || token.isEmpty()){
+            new InsertTransactionTask().execute(record);
             return;
         }
         OkHttpClient client = new OkHttpClient();
@@ -136,6 +146,13 @@ public class NewRecordFragment extends Fragment {
                     requireActivity().runOnUiThread(() ->
                             Toast.makeText(requireContext(), "Record saved successfully", Toast.LENGTH_SHORT).show()
                     );
+                    String jsonResponse = response.body().string();
+                    Gson gson = new Gson();
+                    JsonObject jsonObject = gson.fromJson(jsonResponse, JsonObject.class);
+                    String id = jsonObject.get("id").getAsString();
+
+                    record.setBackendId(id);
+                    new InsertTransactionTask().execute(record);
                 } else {
                     requireActivity().runOnUiThread(() ->
                             Toast.makeText(requireContext(), "Failed to save record", Toast.LENGTH_SHORT).show()
@@ -144,6 +161,7 @@ public class NewRecordFragment extends Fragment {
             }
         });
     }
+
     private String getTokenFromFile() {
         JSONObject accountData = fileManager.readFromFile("accountdata.json");
         try {
@@ -154,6 +172,14 @@ public class NewRecordFragment extends Fragment {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public class InsertTransactionTask extends AsyncTask<Transaction, Void, Void> {
+        @Override
+        protected Void doInBackground(Transaction... transactions) {
+            transactionDao.insert(transactions[0]);
+            return null;
+        }
     }
 
 }
