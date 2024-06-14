@@ -20,8 +20,8 @@ public class JwtUtils {
   @Value("${org.expencetracker.jwtSecret}")
   private String jwtSecret;
 
-  @Value("${org.expencetracker.jwtExpirationMs}")
-  private int jwtExpirationMs;
+  @Value("${org.expencetracker.jwtExpirationMinutes}")
+  private long jwtExpirationMinutes;
 
   public String generateJwtToken(Authentication authentication) {
 
@@ -30,7 +30,7 @@ public class JwtUtils {
     return Jwts.builder()
         .setSubject((userPrincipal.getUsername()))
         .setIssuedAt(new Date())
-        .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+        .setExpiration(new Date((new Date()).getTime() + jwtExpirationMinutes*60000))
         .signWith(key(), SignatureAlgorithm.HS256)
         .compact();
   }
