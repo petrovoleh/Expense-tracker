@@ -32,7 +32,14 @@ public class Analytics {
         AppDatabase database = MainActivity.getDatabase();
         transactionDao = database.transactionDao();
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DAY_OF_MONTH, 1); // Set the day to 1 to get the first day of the month
+                // Set the calendar to the first day of the current month
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+
+        // Set the time to 00:01
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 1);
+
+        // Get the start date
         startDate = calendar.getTime();
     }
 
@@ -49,13 +56,15 @@ public class Analytics {
 
     public int getAllocated(String categoryName) {
         Category category = Categories.getCategory(categoryName);
-        assert category != null;
+        if (category == null)
+            return 0;
         return category.getBudget();
     }
 
     public int getAvailable(String categoryName) {
         Category category = Categories.getCategory(categoryName);
-        assert category != null;
+        if (category == null)
+            return 0;
         int all = category.getBudget();
 
         // Observe the LiveData for total value
@@ -68,7 +77,8 @@ public class Analytics {
 
     public void getAnalytics(String categoryName, AnalyticsCallback callback) {
         Category category = Categories.getCategory(categoryName);
-        assert category != null;
+        if (category == null)
+            return;
         int all = category.getBudget();
 
         // Create a single-threaded ExecutorService

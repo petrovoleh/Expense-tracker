@@ -7,10 +7,13 @@ import androidx.room.PrimaryKey;
 import java.text.DecimalFormat;
 import java.util.Date;
 
+import okhttp3.internal.concurrent.TaskRunner;
+
 @Entity(tableName = "transactions")
 public class Transaction {
     @PrimaryKey(autoGenerate = true)
     private long id;
+    private String backendId;
     private String category;
     private double value;
     private String place;
@@ -37,6 +40,13 @@ public class Transaction {
 
     public void setId(long id) {
         this.id = id;
+    }
+    public String getBackendId() {
+        return backendId;
+    }
+
+    public void setBackendId(String id) {
+        this.backendId = id;
     }
 
     public String getCategory() {

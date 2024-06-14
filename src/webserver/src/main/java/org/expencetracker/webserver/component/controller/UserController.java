@@ -38,6 +38,10 @@ public class UserController {
     public ResponseEntity<String> uploadAvatar(@RequestParam("file") MultipartFile file) {
         return userService.uploadAvatar(file);
     }
+    @DeleteMapping("/avatar/delete")
+    public ResponseEntity<String> deleteAvatar() {
+        return userService.deleteAvatar();
+    }
 
     /**
      * Endpoint to update the profile information of the authenticated user.
@@ -46,7 +50,7 @@ public class UserController {
      * @return a ResponseEntity indicating the result of the update operation.
      */
     @PutMapping("/update")
-    public ResponseEntity<?> updateProfile(@Valid @RequestBody UpdateProfileRequest updateRequest) {
+    public ResponseEntity<?> updateProfile(@RequestBody UpdateProfileRequest updateRequest) {
         return userService.updateProfile(updateRequest);
     }
 }

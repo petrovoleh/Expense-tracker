@@ -1,7 +1,10 @@
 package org.expencetracker.webserver.component.service;
 
+import org.expencetracker.webserver.component.models.Budget;
 import org.expencetracker.webserver.component.models.User;
 import org.expencetracker.webserver.component.payload.request.UpdateProfileRequest;
+import org.expencetracker.webserver.component.repository.BudgetRepository;
+import org.expencetracker.webserver.component.repository.RecordRepository;
 import org.expencetracker.webserver.component.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -23,12 +27,15 @@ public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository;
+    private final RecordRepository recordRepository;
+    private final BudgetRepository budgetRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, RecordRepository recordRepository, BudgetRepository budgetRepository) {
         this.userRepository = userRepository;
+        this.recordRepository = recordRepository;
+        this.budgetRepository = budgetRepository;
     }
-
     /**
      * Retrieves the authenticated user from the security context.
      *
@@ -49,8 +56,48 @@ public class UserService {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
         }
+
+        // Delete user avatar
+        String oldAvatar = user.getAvatar();
+        if (oldAvatar != null) {
+            File oldAvatarFile = new File("./public/images/" + oldAvatar);
+            if (oldAvatarFile.exists()) {
+                oldAvatarFile.delete();
+            }
+        }
+
+        // Delete user records
+        List<org.expencetracker.webserver.component.models.Record> userRecords = recordRepository.findByUserId(user.getId());
+        recordRepository.deleteAll(userRecords);
+
+        // Delete user budgets
+        List<Budget> userBudgets = budgetRepository.findByUserId(user.getId());
+        budgetRepository.deleteAll(userBudgets);
+
+        // Delete user account
         userRepository.delete(user);
-        return ResponseEntity.ok("Account deleted successfully");
+
+        return ResponseEntity.ok("Account and associated data deleted successfully");
+    }
+
+
+    public ResponseEntity<String> deleteAvatar() {
+        User user = getAuthenticatedUser();
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
+        }
+
+        String oldAvatar = user.getAvatar();
+        if (oldAvatar != null) {
+            File oldAvatarFile = new File("./public/images/" + oldAvatar);
+            if (oldAvatarFile.exists()) {
+                oldAvatarFile.delete();
+            }
+        }
+
+        user.setAvatar(null);
+        userRepository.save(user);
+        return ResponseEntity.ok("Avatar deleted successfully");
     }
 
     /**
@@ -80,6 +127,13 @@ public class UserService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Incorrect file extension");
         }
         try {
+            String oldAvatar = user.getAvatar();
+            if (oldAvatar != null) {
+                File oldAvatarFile = new File("./public/images/" + oldAvatar);
+                if (oldAvatarFile.exists()) {
+                    oldAvatarFile.delete();
+                }
+            }
             // Generate a random file name with the correct extension
             String randomFileName = UUID.randomUUID() + extension;
             String directoryPath = "./public/images/";

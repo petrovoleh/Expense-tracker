@@ -23,7 +23,7 @@ public class RecordController {
      * @return a ResponseEntity indicating the result of the operation.
      */
     @PostMapping("/add")
-    public ResponseEntity<?> addRecord(@Valid @RequestBody Record record) {
+    public ResponseEntity<?> addRecord(@RequestBody Record record) {
         return recordService.addRecord(record);
     }
 

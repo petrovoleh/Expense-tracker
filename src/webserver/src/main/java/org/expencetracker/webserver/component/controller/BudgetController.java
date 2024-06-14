@@ -23,7 +23,7 @@ public class BudgetController {
      * @return a ResponseEntity containing the saved budget
      */
     @PostMapping("/add")
-    public ResponseEntity<?> addBudget(@Valid @RequestBody Budget budget) {
+    public ResponseEntity<?> addBudget(@RequestBody Budget budget) {
         return budgetService.addBudget(budget);
     }
 
@@ -45,7 +45,7 @@ public class BudgetController {
      * @return a ResponseEntity containing the updated budget
      */
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateBudget(@PathVariable String id, @Valid @RequestBody Budget budgetDetails) {
+    public ResponseEntity<?> updateBudget(@PathVariable String id, @RequestBody Budget budgetDetails) {
         return budgetService.updateBudget(id, budgetDetails);
     }
 

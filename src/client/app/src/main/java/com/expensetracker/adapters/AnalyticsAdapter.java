@@ -37,10 +37,14 @@ public class AnalyticsAdapter extends RecyclerView.Adapter<AnalyticsAdapter.Anal
             analytics.getAnalytics(names[position], result -> {
                 rows[position] = result;
                 String[] row = rows[position].split(" ");
-                holder.textName.setText(row[0]);
-                holder.textAllocated.setText(row[1]);
-                holder.textUsed.setText(row[2]);
-                holder.textAvailable.setText(row[3]);
+                holder.itemView.post(() -> {
+                    holder.textName.setText(row[0]);
+                    holder.textAllocated.setText(row[1]);
+                    holder.textUsed.setText(row[2]);
+                    holder.textAvailable.setText(row[3]);
+
+                    Log.d("analytics", rows[position] + "\n\n");
+                });
 
                 Log.d("analytics", rows[position] + "\n\n");
 

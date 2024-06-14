@@ -5,7 +5,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -85,6 +88,19 @@ public class SignInFragment extends Fragment {
         });
         return root;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        requireActivity().findViewById(android.R.id.content).post(() -> {
+            BottomNavigationView bottomNavigationView = requireActivity().findViewById(R.id.nav_view);
+            Menu menu = bottomNavigationView.getMenu();
+            for (int i = 0, size = menu.size(); i < size; i++) {
+                MenuItem item = menu.getItem(i);
+                item.setChecked(item.getItemId() == R.id.navigation_profile);
+            }
+        });
+    }
     private void signIn() {
         String username = usernameEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
@@ -147,8 +163,9 @@ public class SignInFragment extends Fragment {
                     @Override
                     public void run() {
                         // Handle response here
-                        System.out.println(responseData);
-                        errorText.setText(responseData);
+                        if(!response.isSuccessful()) {
+                            errorText.setText(responseData);
+                        }
                         try {
                             JSONObject jsonResponse = new JSONObject(responseData);
                             JSONObject json = new JSONObject();
@@ -163,9 +180,14 @@ public class SignInFragment extends Fragment {
                             fileManager.writeToFile("accountdata.json", json);
 
                             // Download and save the avatar image
-                            String avatarUrl = MainActivity.baseUrl + "/public/images/" + jsonResponse.getString("avatar");
-                            downloadAndSaveAvatar(avatarUrl, jsonResponse.getString("accessToken"));
+                            if(!jsonResponse.getString("avatar").isEmpty()) {
+                                String avatarUrl = MainActivity.baseUrl + "/public/images/" + jsonResponse.getString("avatar");
+                                downloadAndSaveAvatar(avatarUrl, jsonResponse.getString("accessToken"));
+                            }
+                            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
 
+                            // Навигация к навигационному пункту signup
+                            navController.navigate(R.id.navigation_profile);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -199,6 +221,7 @@ public class SignInFragment extends Fragment {
             }
         });
     }
+
     private void saveImageToStorage(Bitmap bitmap) {
         File directory = new File(requireContext().getFilesDir(), "avatars");
         if (!directory.exists()) {
@@ -211,12 +234,15 @@ public class SignInFragment extends Fragment {
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
             outputStream.flush();
             outputStream.close();
-            Toast.makeText(requireContext(), "Avatar saved", Toast.LENGTH_SHORT).show();
+            requireActivity().runOnUiThread(() -> {
+                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+                navController.navigate(R.id.navigation_profile);
+            });
         } catch (IOException e) {
             e.printStackTrace();
-            Toast.makeText(requireContext(), "Failed to save avatar", Toast.LENGTH_SHORT).show();
         }
     }
+
 
     @Override
     public void onDestroyView() {

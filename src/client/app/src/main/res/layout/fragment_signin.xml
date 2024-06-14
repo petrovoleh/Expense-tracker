@@ -4,69 +4,65 @@
     android:layout_height="match_parent"
     android:padding="16dp">
 
-    <!-- Logo or app name -->
-    <ImageView
-        android:id="@+id/logoImageView"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/budgets" />
-]
-    <!-- Password EditText -->
-
-    <EditText
-        android:id="@+id/usernameEditText"
+    <!-- Centering container -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/errorText"
-        android:layout_marginTop="17dp"
-        android:hint="@string/username"
-        android:inputType="text" />
-
-    <EditText
-        android:id="@+id/passwordEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/usernameEditText"
-        android:hint="@string/password"
-        android:inputType="textPassword"
-        android:layout_marginTop="16dp" />
-
-    <!-- Sign In Button -->
-    <Button
-        android:id="@+id/signInButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/passwordEditText"
-        android:text="@string/sign_in"
-        android:layout_marginTop="24dp" />
-
-    <!-- Forgot Password TextView -->
-
-    <Button
-        android:id="@+id/signUpButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/passwordEditText"
-        android:layout_marginTop="110dp"
-        android:text="@string/create_new_account" />
-
-    <TextView
-        android:id="@+id/forgotPasswordTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/signInButton"
-        android:layout_marginTop="10dp"
+        android:layout_centerInParent="true"
         android:gravity="center"
-        android:text="@string/forgot_password" />
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/errorText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/logoImageView"
-        android:layout_marginTop="15dp"
-        android:textAlignment="center"
-        android:textSize="16sp" />
+        <!-- Logo or app name -->
+        <ImageView
+            android:id="@+id/logoImageView"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:layout_marginTop="0dp"
+            android:src="@drawable/logo" />
 
+        <!-- Error Text -->
+        <TextView
+            android:id="@+id/errorText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textAlignment="center"
+            android:textSize="16sp" />
+
+        <!-- Username EditText -->
+        <EditText
+            android:id="@+id/usernameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="@string/username"
+            android:inputType="text" />
+
+        <!-- Password EditText -->
+        <EditText
+            android:id="@+id/passwordEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="@string/password"
+            android:inputType="textPassword" />
+
+        <!-- Sign In Button -->
+        <Button
+            android:id="@+id/signInButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="@string/sign_in" />
+
+        <!-- Sign Up Button -->
+        <Button
+            android:id="@+id/signUpButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="130dp"
+            android:text="@string/create_new_account" />
+
+    </LinearLayout>
 </RelativeLayout>

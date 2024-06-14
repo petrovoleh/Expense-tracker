@@ -56,9 +56,6 @@ public class ProfileFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        ProfileViewModel homeViewModel =
-                new ViewModelProvider(this).get(ProfileViewModel.class);
-
         binding = FragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         File avatarFile = new File(requireContext().getFilesDir(), "avatars/avatar.jpg");
@@ -73,8 +70,7 @@ public class ProfileFragment extends Fragment {
             // If data doesn't exist, navigate the user to the sign-in page
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
             navController.navigate(R.id.navigation_signin);
-            BottomNavigationView bottomNavigationView = requireActivity().findViewById(R.id.nav_view);
-            bottomNavigationView.setSelectedItemId(R.id.navigation_profile);
+
         } else {
             // If account data exists, load username and email
             try {
@@ -144,7 +140,6 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
-
                 // Навигация к навигационному пункту signup
                 navController.navigate(R.id.navigation_edit_profile);
             }
@@ -176,6 +171,7 @@ public class ProfileFragment extends Fragment {
 
         return root;
     }
+
     private String getTokenFromFile() {
         JSONObject accountData = fileManager.readFromFile("accountdata.json");
         try {
@@ -193,7 +189,7 @@ public class ProfileFragment extends Fragment {
         // Create DELETE request to the delete account endpoint
         Request request = new Request.Builder()
                 .delete()
-                .url(MainActivity.baseUrl+"/api/profile/delete")
+                .url(MainActivity.baseUrl+"/api/user/delete")
                 .addHeader("Authorization", "Bearer " + token)
                 .build();
 
@@ -240,8 +236,6 @@ public class ProfileFragment extends Fragment {
     }
     @Override
     public void onResume() {
-        BottomNavigationView bottomNavigationView = requireActivity().findViewById(R.id.nav_view);
-        bottomNavigationView.setSelectedItemId(R.id.navigation_profile);
         super.onResume();
         if (!checkAccountData()) {
             // If data doesn't exist, navigate the user to the sign-in page

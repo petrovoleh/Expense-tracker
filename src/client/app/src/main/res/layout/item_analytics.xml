@@ -1,40 +1,55 @@
-<!-- item_analytics.xml -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
     android:padding="16dp">
 
     <TextView
         android:id="@+id/textName"
-        android:layout_width="105dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="@string/name"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        app:layout_constraintWidth_percent="0.28"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <TextView
         android:id="@+id/textAllocated"
-        android:layout_width="95dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="@string/allocated"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        app:layout_constraintWidth_percent="0.24"
+        app:layout_constraintLeft_toRightOf="@+id/textName"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <TextView
         android:id="@+id/textUsed"
-        android:layout_width="95dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="@string/used"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        app:layout_constraintWidth_percent="0.24"
+        app:layout_constraintLeft_toRightOf="@+id/textAllocated"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <TextView
         android:id="@+id/textAvailable"
-        android:layout_width="90dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="@string/available"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        app:layout_constraintWidth_percent="0.24"
+        app:layout_constraintLeft_toRightOf="@+id/textUsed"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

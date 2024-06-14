@@ -88,7 +88,7 @@ public class ChangePasswordFragment extends Fragment {
                 String oldPassword = binding.editTextOldPassword.getText().toString().trim(); // Assuming old password is entered in editTextName
                 String newPassword = binding.editTextNewPassword.getText().toString().trim(); // Assuming new password is entered in editTextEmail
                 String newPassword2 = binding.editTextNewPassword2.getText().toString().trim(); // Assuming new password is entered in editTextEmail
-                if(Validator.validateTwoPasswords(context,newPassword,newPassword2,textView) || Validator.validatePassword(context,newPassword,textView)|| Validator.validatePassword(context,oldPassword,textView)){
+                if(Validator.validateTwoPasswords(context,newPassword,newPassword2,textView) || Validator.validatePassword(context,newPassword,textView)){
                     String token = getTokenFromFile();
                     // Call changePassword method
                     changePassword(oldPassword, newPassword, token);

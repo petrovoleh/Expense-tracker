@@ -7,4 +7,12 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="forest_green_dark">#1A4D2E</color>
+    <color name="forest_green_medium">#4F6F52</color>
+    <color name="cream_light">#F5EFE6</color>
+    <color name="cream_medium">#E8DFCA</color>
+    <color name="cream_dark">#CFC7B0</color>
+    <color name="nav_item_color">#CFC7B0</color> <!-- Example item color -->
+    <color name="nav_item_color_selected">#FFFFFFFF</color> <!-- Example selected item color -->
+
 </resources>

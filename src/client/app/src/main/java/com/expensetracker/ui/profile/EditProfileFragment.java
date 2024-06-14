@@ -118,8 +118,7 @@ public class EditProfileFragment extends Fragment {
     private void saveProfile() {
         String username = binding.editTextName.getText().toString().trim();
         String email = binding.editTextEmail.getText().toString().trim();
-
-        if (Validator.validateName(getContext(), username, binding.editTextName)
+       if (!Validator.validateName(getContext(), username, binding.editTextName)
                 && Validator.validateEmail(getContext(), email, binding.editTextEmail)) {
             saveAccountData(username, email);
             Toast.makeText(requireContext(), "Account data saved", Toast.LENGTH_SHORT).show();
@@ -159,7 +158,7 @@ public class EditProfileFragment extends Fragment {
                 .build();
 
         Request request = new Request.Builder()
-                .url(MainActivity.baseUrl + "/api/profile/avatar")
+                .url(MainActivity.baseUrl + "/api/user/avatar")
                 .addHeader("Authorization", "Bearer " + token)
                 .post(requestBody)
                 .build();
@@ -190,7 +189,7 @@ public class EditProfileFragment extends Fragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("Confirm Deletion");
         builder.setMessage("Are you sure you want to delete the avatar?");
-        builder.setPositiveButton("Delete", (dialog, which) -> deleteAvatar());
+        builder.setPositiveButton("Delete", (dialog, which) -> deleteAvatarFromServer());
         builder.setNegativeButton("Cancel", null);
         builder.create().show();
     }
@@ -201,6 +200,44 @@ public class EditProfileFragment extends Fragment {
             avatarFile.delete();
         }
         imageView.setImageResource(R.drawable.account);
+    }
+    private void deleteAvatarFromServer() {
+        String token = getTokenFromFile();
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url(MainActivity.baseUrl + "/api/user/avatar/delete")
+                .addHeader("Authorization", "Bearer " + token)
+                .delete()
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    Log.d("response", response.body().string());
+                    requireActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                             deleteAvatar();
+                        }
+                    });
+                } else {
+                    requireActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(requireContext(), "Avatar was not deleted, try again later", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    Log.d("response", response.body().string());
+                }
+            }
+        });
     }
 
     @Override
@@ -280,7 +317,7 @@ public class EditProfileFragment extends Fragment {
 
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("username", username);
+            jsonObject.put("name", username);
             jsonObject.put("email", email);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -289,7 +326,7 @@ public class EditProfileFragment extends Fragment {
         RequestBody requestBody = RequestBody.create(JSON, jsonObject.toString());
 
         Request request = new Request.Builder()
-                .url(MainActivity.baseUrl + "/api/profile")
+                .url(MainActivity.baseUrl + "/api/user/update")
                 .addHeader("Authorization", "Bearer " + token)
                 .put(requestBody)
                 .build();
@@ -306,7 +343,7 @@ public class EditProfileFragment extends Fragment {
                 if (response.isSuccessful()) {
                     Log.d("response", response.body().string());
                 } else {
-                    Log.d("response", response.body().string());
+                    Log.e("response", response.body().string());
                 }
             }
         });
