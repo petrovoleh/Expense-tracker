@@ -53,7 +53,7 @@ public class UserControllerTest {
 
         mockMvc.perform(delete("/api/user/delete"))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Account deleted successfully"));
+                .andExpect(content().string("Account and associated data deleted successfully"));
     }
 
     @Test

@@ -79,11 +79,16 @@ public class AuthService {
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         User user = userRepository.findByUsername(username).orElse(null);
+        String avatar ="";
+        if(user != null){
+            avatar = user.getAvatar();
+        }
+
         return ResponseEntity.ok(new JwtResponse(jwt,
                 userDetails.getId(),
                 userDetails.getUsername(),
                 userDetails.getEmail(),
-                user.getAvatar()));
+                avatar));
     }
 
     /**
