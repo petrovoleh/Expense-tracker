@@ -5,7 +5,10 @@ plugins {
 android {
     namespace 'com.expensetracker'
     compileSdk 34
-
+    packagingOptions {
+        exclude 'META-INF/LICENSE.md'
+        exclude 'META-INF/LICENSE-notice.md'
+    }
     defaultConfig {
         applicationId "com.expensetracker"
         minSdk 26
@@ -42,6 +45,7 @@ ext {
 dependencies {
     implementation 'com.itextpdf:itext7-core:7.1.15'
     implementation "androidx.room:room-runtime:2.6.1"
+    androidTestImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
     annotationProcessor "androidx.room:room-compiler:2.6.1"
     implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.2'
     implementation 'io.github.cdimascio:dotenv-java:2.2.0'
